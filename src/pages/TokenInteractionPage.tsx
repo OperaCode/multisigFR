@@ -1,4 +1,5 @@
 import type React from "react";
+import { useState } from "react";
 import "../token-interactions-page.css";
 import ListTile from "../components/ListTile";
 import type { ITokenDetail } from "../interface/ITokenDetail";
@@ -6,6 +7,12 @@ import type { ITokenDetail } from "../interface/ITokenDetail";
 const TokenInteractionPage = (
   {tokenDetail} : {tokenDetail: ITokenDetail}
 ) => {
+  const [expandedTile, setExpandedTile] = useState<string | null>("balanceOf");
+
+  const toggleTile = (title: string) => {
+    setExpandedTile(prev => (prev === title ? null : title));
+  };
+
   return (
     <div className="tf-root">
       <main className="tf-main">
@@ -24,16 +31,6 @@ const TokenInteractionPage = (
               </div>
             </div>
           </div>
-          <div className="token-stats-right">
-            <div className="stat-item">
-              <span className="stat-value">{tokenDetail.totalSupply}</span>
-              <span className="stat-label">Total Supply</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{tokenDetail.decimals}</span>
-              <span className="stat-label">Decimals</span>
-            </div>
-          </div>
         </section>
 
         {/* Load Token Section */}
@@ -49,6 +46,26 @@ const TokenInteractionPage = (
           </div>
         </section>
 
+        {/* Quick Stats Row */}
+        <section className="token-quick-stats">
+          <div className="quick-stat-card">
+            <span className="quick-stat-label">Name</span>
+            <span className="quick-stat-value">{tokenDetail.name}</span>
+          </div>
+          <div className="quick-stat-card">
+            <span className="quick-stat-label">Symbol</span>
+            <span className="quick-stat-value">{tokenDetail.symbol}</span>
+          </div>
+          <div className="quick-stat-card">
+            <span className="quick-stat-label">Decimals</span>
+            <span className="quick-stat-value">{tokenDetail.decimals}</span>
+          </div>
+          <div className="quick-stat-card">
+            <span className="quick-stat-label">Total Supply</span>
+            <span className="quick-stat-value">{tokenDetail.totalSupply}</span>
+          </div>
+        </section>
+
         {/* Functions Section */}
         <section className="functions-container">
           {/* Read Functions */}
@@ -61,12 +78,20 @@ const TokenInteractionPage = (
               <span className="column-subtitle">No gas required</span>
             </div>
             <div className="function-list">
-              <ListTile title="name()" tag="VIEW" isExpanded={true} />
-              <ListTile title="symbol()" tag="VIEW" />
-              <ListTile title="decimals()" tag="VIEW" />
-              <ListTile title="totalSupply()" tag="VIEW" />
-              <ListTile title="balanceOf" tag="VIEW" />
-              <ListTile title="allowance" tag="VIEW" />
+              <ListTile 
+                title="balanceOf" 
+                tag="VIEW" 
+                isExpanded={expandedTile === "balanceOf"} 
+                onToggle={() => toggleTile("balanceOf")} 
+                placeholders={["account"]}
+              />
+              <ListTile 
+                title="allowance" 
+                tag="VIEW" 
+                isExpanded={expandedTile === "allowance"} 
+                onToggle={() => toggleTile("allowance")} 
+                placeholders={["owner", "spender"]}
+              />
             </div>
           </div>
 
@@ -80,10 +105,34 @@ const TokenInteractionPage = (
               <span className="column-subtitle">Requires wallet</span>
             </div>
             <div className="function-list">
-              <ListTile title="mint" tag="WRITE" />
-              <ListTile title="transfer" tag="WRITE" />
-              <ListTile title="transferFrom" tag="WRITE" />
-              <ListTile title="approve" tag="WRITE" />
+              <ListTile 
+                title="mint" 
+                tag="WRITE" 
+                isExpanded={expandedTile === "mint"} 
+                onToggle={() => toggleTile("mint")}
+                placeholders={["address", "amount"]}
+              />
+              <ListTile 
+                title="transfer" 
+                tag="WRITE" 
+                isExpanded={expandedTile === "transfer"} 
+                onToggle={() => toggleTile("transfer")} 
+                placeholders={["to", "amount"]}
+              />
+              <ListTile 
+                title="transferFrom" 
+                tag="WRITE" 
+                isExpanded={expandedTile === "transferFrom"} 
+                onToggle={() => toggleTile("transferFrom")}
+                placeholders={["owner", "account", "amount"]}
+              />
+              <ListTile 
+                title="approve" 
+                tag="WRITE" 
+                isExpanded={expandedTile === "approve"} 
+                onToggle={() => toggleTile("approve")} 
+                placeholders={["spender", "amount"]}
+              />
             </div>
           </div>
         </section>
