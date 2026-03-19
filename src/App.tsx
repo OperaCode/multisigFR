@@ -1,16 +1,14 @@
-import TokenInteractionPage from "./pages/TokenInteractionPage";
+import "./App.css";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 const App = () => {
   return (
     <>
-      <TokenInteractionPage tokenDetail={{
-        name: "Group B Token",
-        symbol: "GRP-B",
-        decimals: 18,
-        totalSupply: "100000000"
-      }}/>
+      <Navbar />
+      <Footer/>
     </>
   );
-};
+}
 
 export default App;
