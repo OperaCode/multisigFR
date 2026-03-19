@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-interface TokenModalProps {
+interface CreateTokenModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onDeploy: (tokenData: TokenData) => void;
 }
 
 interface TokenData {
@@ -13,175 +12,209 @@ interface TokenData {
   initialSupply: number;
 }
 
-const TokenModal: React.FC<TokenModalProps> = ({ isOpen, onClose, onDeploy }) => {
-    const [tokenData, setTokenData] = useState<TokenData>({
-        tokenName: '',
-        decimals: 18,
-        symbol: '',
-        initialSupply: 1000000,
-    });
-
-    const [errors, setErrors] = useState<Record<string, string>>({});
-
-    const validateForm = (): boolean => {
-        const newErrors: Record<string, string> = {};
-
-        if (!tokenData.tokenName.trim()) {
-            newErrors.tokenName = 'Token name is required';
-        }
-        if (!tokenData.symbol.trim()) {
-            newErrors.symbol = 'Symbol is required';
-        }
-        if (tokenData.decimals < 0 || tokenData.decimals > 18) {
-            newErrors.decimals = 'Decimals must be between 0 and 18';
-        }
-        if (tokenData.initialSupply <= 0) {
-            newErrors.initialSupply = 'Initial supply must be greater than 0';
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setTokenData(prev => ({
-        ...prev,
-        [name]: name === 'tokenName' || name === 'symbol' 
-            ? value 
-            : Number(value)
-        }));
-    };
-
-    const handleDeploy = () => {
-        if (validateForm()) {
-            console.log('Deploying token with data:', tokenData);
-
-            alert(`Token "${tokenData.tokenName}" deployed successfully!`);
-            onDeploy(tokenData);
-            onClose();
-        }
-    };
+export default function CreateTokenModal({
+  isOpen,
+  onClose,
+}: CreateTokenModalProps) {
+  const [form, setForm] = useState({
+    tokenName: "",
+    symbol: "",
+    decimals: "18",
+    initialSupply: "1000000",
+  });
 
   if (!isOpen) return null;
 
-    return (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-            <div 
-                className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
-                onClick={onClose}
-            />
-            
-            <div className="flex min-h-full items-center justify-center p-4">
-                <div className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left shadow-xl transition-all">
-                    <div className="mb-6">
-                        <h2 className="text-2xl font-semibold text-gray-900">Create Token</h2>
-                        <p className="mt-1 text-sm text-gray-500">
-                            Configure your ERC-20 asset parameters.
-                        </p>
-                    </div>
+    const [errors, setErrors] = useState<Partial<TokenData>>({});
 
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                TOKEN NAME
-                            </label>
-                            <input
-                                type="text"
-                                name="tokenName"
-                                value={tokenData.tokenName}
-                                onChange={handleInputChange}
-                                placeholder="e.g. Neon Sapphire"
-                                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                                    errors.tokenName ? 'border-red-500' : 'border-gray-300'
-                                }`}
-                            />
-                            {errors.tokenName && (
-                                <p className="mt-1 text-xs text-red-500">{errors.tokenName}</p>
-                            )}
-                            <p className="mt-1 text-xs text-gray-400">e.g. Neon Sapphire</p>
-                        </div>
+  const validateForm = (): boolean => {
+    const newErrors: Partial<Record<string, string>> = {};
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                DECIMALS
-                            </label>
-                            <input
-                                type="number"
-                                name="decimals"
-                                value={tokenData.decimals}
-                                onChange={handleInputChange}
-                                min="0"
-                                max="18"
-                                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                                    errors.decimals ? 'border-red-500' : 'border-gray-300'
-                                }`}
-                            />
-                            {errors.decimals && (
-                                <p className="mt-1 text-xs text-red-500">{errors.decimals}</p>
-                            )}
-                            <p className="mt-1 text-xs text-gray-400">18</p>
-                        </div>
+    if (!form.tokenName.trim()) {
+      newErrors.tokenName = 'Token name is required';
+    }
+    if (!form.symbol.trim()) {
+      newErrors.symbol = 'Symbol is required';
+    }
+    if (Number(form.decimals) < 0 || Number(form.decimals) > 18) {
+      newErrors.decimals = 'Decimals must be between 0 and 18';
+    }
+    if (Number(form.initialSupply) <= 0) {
+      newErrors.initialSupply = 'Initial supply must be greater than 0';
+    }
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                SYMBOL
-                            </label>
-                            <input
-                                type="text"
-                                name="symbol"
-                                value={tokenData.symbol}
-                                onChange={handleInputChange}
-                                placeholder="e.g. NSPH"
-                                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                                    errors.symbol ? 'border-red-500' : 'border-gray-300'
-                                }`}
-                            />
-                            {errors.symbol && (
-                                <p className="mt-1 text-xs text-red-500">{errors.symbol}</p>
-                            )}
-                            <p className="mt-1 text-xs text-gray-400">e.g. NSPH</p>
-                        </div>
+    setErrors(newErrors as Partial<TokenData>);
+    return Object.keys(newErrors).length === 0;
+  };
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                            INITIAL SUPPLY
-                            </label>
-                            <input
-                            type="number"
-                            name="initialSupply"
-                            value={tokenData.initialSupply}
-                            onChange={handleInputChange}
-                            min="1"
-                            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                                errors.initialSupply ? 'border-red-500' : 'border-gray-300'
-                            }`}
-                            />
-                            {errors.initialSupply && (
-                            <p className="mt-1 text-xs text-red-500">{errors.initialSupply}</p>
-                            )}
-                            <p className="mt-1 text-xs text-gray-400">1000000</p>
-                        </div>
-                    </div>
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-                    <div className="mt-6 flex gap-3">
-                        <button
-                            onClick={onClose}
-                            className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleDeploy}
-                            className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                        >
-                            Deploy Token
-                        </button>
-                    </div>
-                </div>
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.style.borderColor = "rgba(0,229,255,0.35)";
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      style={{ background: "rgba(10,15,30,0.75)", backdropFilter: "blur(6px)" }}
+      onClick={onClose}
+    >
+      <div
+        className="w-480px rounded-2xl overflow-hidden"
+        style={{
+          background: "linear-gradient(145deg, #141c2e, #111827)",
+          boxShadow:
+            "0 25px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06)",
+        }}
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+      >
+        <div className="p-8">
+          <div className="flex items-center justify-between mb-5 cursor-pointer">
+            <span
+              className="text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full"
+              style={{
+                background: "linear-gradient(90deg, #00e5ff, #00bcd4)",
+                color: "#0a0f1e",
+              }}
+            >
+              Step 01: Input
+            </span>
+            <button
+              onClick={onClose}
+              className="w-7 h-7 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity cursor-pointer"
+              style={{ background: "rgba(255,255,255,0.08)" }}
+            >
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path
+                  d="M1 1l10 10M11 1L1 11"
+                  stroke="white"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <h2 className="text-white text-[1.65rem] font-bold mb-1 tracking-tight">
+            Create Token
+          </h2>
+          <p className="text-[#8a94a6] text-sm mb-7">
+            Configure your ERC-20 asset parameters.
+          </p>
+
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-semibold tracking-widest uppercase text-[#8a94a6]">
+                Token Name
+              </label>
+              <input
+                type="text"
+                name="tokenName"
+                value={form.tokenName}
+                onChange={handleChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                placeholder="e.g. Neon Sapphire"
+                className="w-full rounded-lg px-4 py-3 text-sm text-white placeholder-[#4a5568] outline-none transition-colors"
+                style={{
+                  background: "#1a2236",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                }}
+              />
+
+              {errors.tokenName && (
+                <p className="mt-1 text-xs text-red-500">{errors.tokenName}</p>
+              )}
             </div>
-        </div>
-    );
-};
 
-export default TokenModal;
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-semibold tracking-widest uppercase text-[#8a94a6]">
+                Symbol
+              </label>
+              <input
+                type="text"
+                name="symbol"
+                value={form.symbol}
+                onChange={handleChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                placeholder="e.g. NSPH"
+                className="w-full rounded-lg px-4 py-3 text-sm text-white placeholder-[#4a5568] outline-none transition-colors"
+                style={{
+                  background: "#1a2236",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                }}
+              />
+
+              {errors.symbol && (
+                <p className="mt-1 text-xs text-red-500">{errors.symbol}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-semibold tracking-widest uppercase text-[#8a94a6]">
+                Decimals
+              </label>
+              <input
+                type="number"
+                name="decimals"
+                value={form.decimals}
+                onChange={handleChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                className="w-full rounded-lg px-4 py-3 text-sm text-white outline-none transition-colors"
+                style={{
+                  background: "#1a2236",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                }}
+              />
+
+              {errors.symbol && (
+                <p className="mt-1 text-xs text-red-500">{errors.symbol}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-semibold tracking-widest uppercase text-[#8a94a6]">
+                Initial Supply
+              </label>
+              <input
+                type="number"
+                name="initialSupply"
+                value={form.initialSupply}
+                onChange={handleChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                className="w-full rounded-lg px-4 py-3 text-sm text-white outline-none transition-colors"
+                style={{
+                  background: "#1a2236",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                }}
+              />
+
+              {errors.initialSupply && (
+                <p className="mt-1 text-xs text-red-500">{errors.initialSupply}</p>
+              )}
+            </div>
+          </div>
+
+          <button
+            className="w-full py-4 rounded-xl text-[#0a0f1e] font-bold text-sm tracking-wide hover:brightness-110 transition-all cursor-pointer"
+            style={{
+              background: "linear-gradient(90deg, #00e5ff, #00bcd4)",
+              boxShadow: "0 4px 24px rgba(0,229,255,0.25)",
+            }}
+          >
+            Deploy Token
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
