@@ -1,8 +1,12 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useApp } from '../context/AppContext';
-import { PropertyCard } from '../components/property/PropertyCard';
-import { SkeletonCard } from '../components/ui/Loader';
-import { PROPERTY_TYPE_OPTIONS, PROPERTY_CATEGORY_OPTIONS, PRICE_RANGE_OPTIONS } from '../utils/helpers';
+import { useState, useMemo, useEffect } from "react";
+import { useApp } from "../context/AppContext";
+import { PropertyCard } from "../components/property/PropertyCard";
+import { SkeletonCard } from "../components/ui/Loader";
+import {
+  PROPERTY_TYPE_OPTIONS,
+  PROPERTY_CATEGORY_OPTIONS,
+  PRICE_RANGE_OPTIONS,
+} from "../utils/helpers";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -23,17 +27,28 @@ export function MarketplacePage() {
   // Filter logic
   const filteredProperties = useMemo(() => {
     return listedProperties.filter((p) => {
-      const typeMatch = !filterType || filterType === 'All Types' || p.propType === filterType;
-      const catMatch = !filterCategory || filterCategory === 'All Categories' || p.category === filterCategory;
+      const typeMatch =
+        !filterType || filterType === "All Types" || p.propType === filterType;
+      const catMatch =
+        !filterCategory ||
+        filterCategory === "All Categories" ||
+        p.category === filterCategory;
       let priceMatch = true;
-      if (filterPrice === '0 - 50K') priceMatch = Number(p.price) / 1e18 <= 50000;
-      else if (filterPrice === '50K - 250K') priceMatch = Number(p.price) / 1e18 > 50000 && Number(p.price) / 1e18 <= 250000;
-      else if (filterPrice === '250K+') priceMatch = Number(p.price) / 1e18 > 250000;
+      if (filterPrice === "0 - 50K")
+        priceMatch = Number(p.price) / 1e18 <= 50000;
+      else if (filterPrice === "50K - 250K")
+        priceMatch =
+          Number(p.price) / 1e18 > 50000 && Number(p.price) / 1e18 <= 250000;
+      else if (filterPrice === "250K+")
+        priceMatch = Number(p.price) / 1e18 > 250000;
       return typeMatch && catMatch && priceMatch;
     });
   }, [listedProperties, filterType, filterCategory, filterPrice]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredProperties.length / ITEMS_PER_PAGE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredProperties.length / ITEMS_PER_PAGE)
+  );
   const paginatedProperties = filteredProperties.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
@@ -44,10 +59,15 @@ export function MarketplacePage() {
   // Scroll reveal
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add('visible')),
+      (entries) =>
+        entries.forEach(
+          (e) => e.isIntersecting && e.target.classList.add("visible")
+        ),
       { threshold: 0.05 }
     );
-    document.querySelectorAll('.scroll-reveal').forEach((el) => observer.observe(el));
+    document
+      .querySelectorAll(".scroll-reveal")
+      .forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, [paginatedProperties]);
 
@@ -60,7 +80,8 @@ export function MarketplacePage() {
             Marketplace
           </h1>
           <p className="text-on-surface-variant max-w-2xl font-light text-base md:text-lg font-body">
-            Curated digital real estate assets with high liquidity and verified chain history.
+            Curated digital real estate assets with high liquidity and verified
+            chain history.
           </p>
         </header>
 
@@ -141,7 +162,12 @@ export function MarketplacePage() {
           </p>
           {(filterType || filterCategory || filterPrice) && (
             <button
-              onClick={() => { setFilterType(''); setFilterCategory(''); setFilterPrice(''); setCurrentPage(1); }}
+              onClick={() => {
+                setFilterType("");
+                setFilterCategory("");
+                setFilterPrice("");
+                setCurrentPage(1);
+              }}
               className="text-primary text-sm font-label hover:underline"
             >
               Clear filters
@@ -151,23 +177,33 @@ export function MarketplacePage() {
 
         {/* Property Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {isLoadingProperties
-            ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
-            : paginatedProperties.length > 0
-            ? paginatedProperties.map((property, i) => (
-                <PropertyCard key={property.id} property={property} animationDelay={i * 80} />
-              ))
-            : (
-              <div className="col-span-3 flex flex-col items-center justify-center py-24 gap-6">
-                <div className="w-20 h-20 rounded-full bg-surface-container-highest flex items-center justify-center">
-                  <span className="material-symbols-outlined text-4xl text-on-surface-variant">domain_disabled</span>
-                </div>
-                <div className="text-center">
-                  <h3 className="text-xl font-headline font-bold mb-2">No properties found</h3>
-                  <p className="text-on-surface-variant text-sm font-body">Try adjusting your filters</p>
-                </div>
+          {isLoadingProperties ? (
+            Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+          ) : paginatedProperties.length > 0 ? (
+            paginatedProperties.map((property, i) => (
+              <PropertyCard
+                key={property.id}
+                property={property}
+                animationDelay={i * 80}
+              />
+            ))
+          ) : (
+            <div className="col-span-3 flex flex-col items-center justify-center py-24 gap-6">
+              <div className="w-20 h-20 rounded-full bg-surface-container-highest flex items-center justify-center">
+                <span className="material-symbols-outlined text-4xl text-on-surface-variant">
+                  domain_disabled
+                </span>
               </div>
-            )}
+              <div className="text-center">
+                <h3 className="text-xl font-headline font-bold mb-2">
+                  No properties found
+                </h3>
+                <p className="text-on-surface-variant text-sm font-body">
+                  Try adjusting your filters
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Pagination */}
@@ -182,19 +218,21 @@ export function MarketplacePage() {
             </button>
 
             <div className="flex gap-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`w-10 h-10 rounded-full font-bold font-label text-sm transition-all ${
-                    page === currentPage
-                      ? 'bg-primary-container text-on-primary'
-                      : 'bg-surface-container-low text-on-surface hover:bg-surface-container-high'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`w-10 h-10 rounded-full font-bold font-label text-sm transition-all ${
+                      page === currentPage
+                        ? "bg-primary-container text-on-primary"
+                        : "bg-surface-container-low text-on-surface hover:bg-surface-container-high"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                )
+              )}
             </div>
 
             <button

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Modal } from "./Modal";
 import { Button } from "../ui/Button";
 import { useBuyerApprove, useBuyProperty } from "../../hooks/contractHooks";
@@ -88,10 +88,14 @@ export function BuyPropertyModal() {
         {/* Steps */}
         <div className="space-y-3">
           <div
-            className={`flex items-center gap-3 ${step === 1 ? "" : "opacity-60"}`}
+            className={`flex items-center gap-3 ${
+              step === 1 ? "" : "opacity-60"
+            }`}
           >
             <div
-              className={`w-8 h-8 rounded-full border-2 flex items-center justify-center shrink-0 ${step >= 1 ? "border-primary" : "border-outline"}`}
+              className={`w-8 h-8 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                step >= 1 ? "border-primary" : "border-outline"
+              }`}
             >
               {step > 1 ? (
                 <span className="material-symbols-outlined filled text-secondary text-sm">
@@ -106,10 +110,14 @@ export function BuyPropertyModal() {
             </span>
           </div>
           <div
-            className={`flex items-center gap-3 ${step === 2 ? "" : "opacity-40"}`}
+            className={`flex items-center gap-3 ${
+              step === 2 ? "" : "opacity-40"
+            }`}
           >
             <div
-              className={`w-8 h-8 rounded-full border-2 flex items-center justify-center shrink-0 ${step === 2 ? "border-primary" : "border-outline"}`}
+              className={`w-8 h-8 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                step === 2 ? "border-primary" : "border-outline"
+              }`}
             >
               <span className="text-xs font-bold text-outline">2</span>
             </div>

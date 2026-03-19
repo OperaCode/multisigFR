@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { PropertyCard } from "../components/property/PropertyCard";
@@ -101,7 +101,9 @@ export function HomePage() {
               <Link
                 to="/marketplace"
                 className="bg-primary-container text-on-primary px-6 md:px-8 py-3 md:py-4 rounded-lg font-bold text-base md:text-lg hover:shadow-[0_0_20px_rgba(0,210,255,0.4)] transition-all text-center font-headline"
-              >Explore Listings</Link>
+              >
+                Explore Listings
+              </Link>
               <a
                 href="#how-it-works"
                 className="border border-outline-variant/20 bg-surface-container-high/40 backdrop-blur-md text-primary px-6 md:px-8 py-3 md:py-4 rounded-lg font-bold text-base md:text-lg hover:bg-surface-container-high transition-all text-center font-headline"
@@ -201,9 +203,7 @@ export function HomePage() {
         id="how-it-works"
         className="py-16 md:py-24 container mx-auto px-6 md:px-8"
       >
-
-
-<div className="flex flex-col lg:flex-row gap-12 md:gap-16 items-center">
+        <div className="flex flex-col lg:flex-row gap-12 md:gap-16 items-center">
           <div className="lg:w-1/2 space-y-6 md:space-y-8 scroll-reveal">
             <h2 className="font-headline text-3xl md:text-5xl font-extrabold leading-tight">
               Beyond Static <br />
@@ -290,8 +290,7 @@ export function HomePage() {
         </div>
       </section>
 
-
-{/* ─── CTA Section ─── */}
+      {/* ─── CTA Section ─── */}
       <section className="py-16 md:py-24 bg-surface-container-low border-t border-outline-variant/5">
         <div className="container mx-auto px-6 md:px-8 text-center space-y-6 md:space-y-8 scroll-reveal">
           <h2 className="font-headline text-3xl md:text-5xl font-extrabold">
