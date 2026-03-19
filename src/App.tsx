@@ -19,7 +19,7 @@ export default function App() {
       )} 
        {page === 'erc20' && ( */}
          
-        {/* <ERC20Page /> */}
+        <ERC20Page />
          
        {/* )} */}
       

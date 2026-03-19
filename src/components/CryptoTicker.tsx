@@ -102,8 +102,11 @@ export default function CryptoTicker() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-50 h-[52px] flex items-center overflow-hidden border-t border-[rgba(212,175,55,0.22)]"
-      style={{ background: 'linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0.18) 100%)' }}
+      className="fixed bottom-0 left-0 right-0 z-50 h-[52px] flex items-center overflow-hidden border-t hidden md:flex"
+      style={{ 
+        background: 'linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0.18) 100%)',
+        borderColor: 'rgba(212,175,55,0.22)'
+      }}
       onMouseEnter={() => { pausedRef.current = true }}
       onMouseLeave={() => { pausedRef.current = false }}
     >
