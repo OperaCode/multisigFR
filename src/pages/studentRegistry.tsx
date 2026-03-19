@@ -1,225 +1,76 @@
-import { studentIcon } from "../components/icons";
+import { mockStudents } from '../data/mockData'
 
-import { useEffect, useState } from "react";
-import "../registerStudent.scss"
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { toast } from "react-toastify";
-import PortalNav from '../components/PortalNav'
+function StudentRegistry() {
+	return (
+		<main className="px-5 py-7 sm:px-9 lg:px-[56px] lg:py-7">
+			<p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#1459d3]">Registry</p>
+			<h2 className="mt-2 text-[36px] font-semibold leading-none text-[#161c25]">Student Registry</h2>
+			<p className="mt-3 max-w-[720px] text-[13px] leading-7 text-[#4d5562]">
+				Manage enrollment, academic status, and contact details for all active students.
+			</p>
 
-interface Student {
-  firstName: string;
-  lastName: string;
-  id: string | number;
-  gender: string;
-  suspended: boolean;
-  paymentStatus: boolean;
-  timeStamp: number;
-  level: number;
-  fees: number;
-  age: number;
-  address: string;
+			<div className="mt-8 grid gap-4 md:grid-cols-3">
+				<article className="rounded-lg border border-[#dde2e9] bg-white px-6 py-5">
+					<p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8a919d]">Total Students</p>
+					<h3 className="mt-3 text-[36px] font-semibold text-[#161c25]">1,248</h3>
+					<p className="mt-2 text-[12px] font-semibold text-[#4e88de]">+4.2% this term</p>
+				</article>
+
+				<article className="rounded-lg border border-[#dde2e9] bg-white px-6 py-5">
+					<p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8a919d]">Active Programs</p>
+					<h3 className="mt-3 text-[36px] font-semibold text-[#161c25]">18</h3>
+					<p className="mt-2 text-[12px] font-semibold text-[#2d9b6f]">Stable enrollment</p>
+				</article>
+
+				<article className="rounded-lg border border-[#dde2e9] bg-white px-6 py-5">
+					<p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8a919d]">Pending Reviews</p>
+					<h3 className="mt-3 text-[36px] font-semibold text-[#161c25]">32</h3>
+					<p className="mt-2 text-[12px] font-semibold text-[#d9651f]">Requires follow-up</p>
+				</article>
+			</div>
+
+			<section className="mt-8 rounded-lg border border-[#dde2e9] bg-white p-6">
+				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+					<h4 className="text-[20px] font-semibold text-[#161c25]">Recent Students</h4>
+					<button
+						type="button"
+						className="rounded-md bg-[#1457d2] px-4 py-2 text-[13px] font-semibold text-white shadow-[0_4px_8px_rgba(20,87,210,0.28)] transition hover:bg-[#1048b3]"
+					>
+						+ Add Student
+					</button>
+				</div>
+
+				<div className="mt-5 grid gap-3">
+					{mockStudents.map((student) => (
+						<div
+							key={student.id}
+							className="flex flex-col gap-3 rounded-lg border border-[#eef1f5] bg-[#f9fafc] px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+						>
+							<div className="flex items-center gap-3">
+								<img
+									src={student.image}
+									alt={student.name}
+									className="h-10 w-10 rounded-full object-cover"
+								/>
+								<div>
+									<p className="text-[14px] font-semibold text-[#161c25]">{student.name}</p>
+									<p className="mt-1 text-[12px] text-[#7c8796]">
+										Level {student.level} • Age {student.age}
+									</p>
+								</div>
+							</div>
+							<div className="flex items-center gap-3 text-[12px] font-semibold text-[#7c8796]">
+								<span>{student.wallet}</span>
+								<span className="rounded-full bg-[#e8f0fe] px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-[#4e88de]">
+									{student.paymentStatus}
+								</span>
+							</div>
+						</div>
+					))}
+				</div>
+			</section>
+		</main>
+	)
 }
 
-const RegisterStudent: React.FC = () => {
-  const [isUpdating, setIsUpdating] = useState<boolean>(false);
-  const [errData, setErrData] = useState<Record<string, string>>({});
-  const [buttonStatus, setButtonStatus] = useState<boolean>(true);
-  const [student, setStudent] = useState<Student>({
-    firstName: "",
-    lastName: "",
-    id: "",
-    gender: "",
-    suspended: false,
-    paymentStatus: false,
-    timeStamp: Date.now(),
-    level: 0,
-    fees: 0,
-    age: 0,
-    address: "",
-  });
-
-  const studentsData: Student[] = localStorage.getItem("studentsData")
-    ? JSON.parse(localStorage.getItem("studentsData") as string)
-    : [];
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
-    const value = e.target.value;
-    setStudent({ ...student, [e.target.name]: value });
-  };
-  // const resetFormValues = () => {
-  //     setTitle("");
-  //     setDesc("");
-  //   };
-  const handleAddStudent = (e?: React.FormEvent | React.MouseEvent): void => {
-    if (e) e.preventDefault();
-    const newErr: Record<string, string> = {};
-    if (!student.firstName || !student.lastName || !student.level || !student.gender) {
-      toast.error("Kindly input correct details");
-      newErr.title = "Kindly input your event's title";
-      return;
-    }
-    student.id = studentsData.length + 1;
-    studentsData.push(student);
-    setButtonStatus(true);
-    localStorage.setItem("studentsData", JSON.stringify(studentsData));
-    console.log("added");
-    toast.success("Student added successfully! 🎉");
-    student.firstName = "";
-    student.lastName = "";
-    student.gender = "";
-    student.level = 0;
-    // window.location.href = "/";
-    console.log(`Added ${student.firstName}`);
-  };
-
-  const level: number[] = [100, 200, 300, 400];
-
-  return (
-    <>
-      <section className="container">
-        <div className="sideBar">
-          <PortalNav />
-        </div>
-        <div className="main">
-          <section className="header">
-            <h1>Student Registry</h1>
-            <div className="headerBtn">
-              <p>The central ledger of academic standing, financial compliance, and institutional identity for the current session.</p>
-              <div style={!buttonStatus ? { display: "none" } : { display: "block" }}>
-                {/* <img src={studentIcon} alt="" /> */}
-                <input
-                  className="submit-btn" type="submit"
-                  onClick={() => setButtonStatus(false)} value={"+Add student"}
-                  onChange={handleChange as React.ChangeEventHandler<HTMLInputElement>}
-                />
-              </div>
-            </div>
-
-            <form style={buttonStatus ? { display: "none" } : { display: "block" }}
-              action=""
-              onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
-                event.preventDefault();
-                handleAddStudent();
-              }}
-            >
-              <div className="addStudent">
-                <div className="inputGroup">
-                  <label htmlFor="firstName">First name</label>
-                  <input type="text" name="firstName" id="" value={student.firstName}
-                    onChange={handleChange as React.ChangeEventHandler<HTMLInputElement>}
-                  />
-                </div>
-                <div className="inputGroup">
-                  <label htmlFor="lastName">Last name</label>
-                  <input type="text" name="lastName" value={student.lastName}
-                    onChange={handleChange as React.ChangeEventHandler<HTMLInputElement>}
-
-                  />
-                </div>
-                <div className="inputGroup">
-                  <label htmlFor="age">Age</label>
-                  <input type="number" name="age" id="" value={student.age}
-                    onChange={handleChange as React.ChangeEventHandler<HTMLInputElement>}
-                  />
-                </div>
-                <div className="select">
-                  <select value={student.gender} name='gender' onChange={handleChange}>Gender
-                    <option value="">-- Gender -- </option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                  </select>
-                  <select value={student.level} name='level' onChange={handleChange}>
-                    <option value="">-- Level --</option>
-                    {level.map((level: number, index: number) => (
-                      <option key={index} value={level}>
-                        {level}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              {/* add student button */}
-              <div className="headerBtn">
-                {/* <img src={studentIcon} alt="" /> */}
-                <input
-                  className="submit-btn" type="submit"
-                  onClick={handleAddStudent} value={"+Add student"}
-                  onChange={handleChange as React.ChangeEventHandler<HTMLInputElement>}
-                />
-              </div>
-            </form>
-
-
-          </section>
-
-          {/* search */}
-          <section className="search-cont">
-            <div className="search">
-              <input type="text" value="" placeholder="search by name, level, or address"
-                onChange={handleChange as React.ChangeEventHandler<HTMLInputElement>}
-
-              />
-              <span>Level</span>
-              <span>Payment status</span>
-            </div>
-          </section>
-
-          <section className="displayStudent">
-            <div className="title">
-              <span className="title1">Student</span>
-              <span>Id / Level</span>
-              <span>Age</span>
-              <span>Wallet Add.</span>
-              <span>Status</span>
-              <span>Actions</span>
-            </div>
-            <div className="details">
-              {studentsData && studentsData.map((student) => (
-                < >
-                  <div key={student.id} className="student">
-                    <div className="about">
-                      <img src="" alt="" />
-                      <div className="det">
-                        <p>{student.lastName + " " + student.firstName}</p>
-                        <p>{student.lastName + student.id}@web3bridge.edu.org</p>
-                      </div>
-
-                    </div>
-                    <div className="id">
-                      <p>#{student.id}</p>
-                      <p>{student.level}</p>
-                    </div>
-                    <div>
-                                          <span>{student.age}</span>
-
-                    </div>
-                    <div>
-                                          <span>address</span>
-
-                    </div>
-<div>
-                      <span className="status" style={student.paymentStatus ? { backgroundColor: "#c7fcc0", color: "green" } : { backgroundColor: "#fda9a9", color: "#470303" }}>{student.paymentStatus ? "Paid" : "Not paid"}</span>
-</div>                    <div>
-                      <b>.</b>
-                      <b>.</b>
-                      <b>.</b>
-
-                    </div>
-                  </div>
-                </>
-              ))}
-
-            </div>
-
-            <div className="footer">
-              <p>Showing {studentsData.length} of {studentsData.length} students</p>
-            </div>
-          </section>
-        </div>
-      </section>
-    </>
-  );
-}
-
-export default RegisterStudent;
+export default StudentRegistry
