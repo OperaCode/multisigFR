@@ -1,73 +1,91 @@
-import React from "react";
+import type React from "react";
 import "../main-page.css";
+import ListTile from "../components/ListTile";
 
 const MainPage: React.FC = () => {
   return (
-    <main>
-      <div className="main-page">
-        <div className="main-header">
-          <div>
-            <h2>
-              Token interaction
-            </h2>
-            <p>
-              Inspect token stats and stage ERC20 actions (UI-only).
-            </p>
+    <div className="tf-root">
+      <main className="tf-main">
+        {/* Token Header Card */}
+        <section className="token-header-card">
+          <div className="token-info-left">
+            <button className="back-button">← Back</button>
+            <div className="token-logo">CR</div>
+            <div className="token-name-section">
+              <h2>
+                CryptoX <span className="token-symbol">(CRX)</span>
+              </h2>
+              <div className="token-address">
+                0xA1b2C3d4...7890
+                <span style={{ cursor: 'pointer', opacity: 0.6 }}>📋</span>
+              </div>
+            </div>
           </div>
-          <div className="token">
-            <p>Token</p>
-            <span>0x000000000000000000000000000000000000</span>
+          <div className="token-stats-right">
+            <div className="stat-item">
+              <span className="stat-value">10,000,000</span>
+              <span className="stat-label">Total Supply</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-value">18</span>
+              <span className="stat-label">Decimals</span>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div className="token-stats">
-          <span>
-            <p>Name</p>
-            <span>Mock Token</span>
-          </span>
-          <span>
-            <p>Synbol</p>
-            <span>MOCK</span>
-          </span>
-          <span>
-            <p>Decimals</p>
-            <span>18</span>
-          </span>
-          <span>
-            <p>Total Supply</p>
-            <span>100000000.00</span>
-          </span>
-        </div>
+        {/* Load Token Section */}
+        <section className="load-token-section">
+          <span className="load-token-label">Test a different token address</span>
+          <div className="load-token-input-container">
+            <input
+              type="text"
+              placeholder="Paste contract address - 0x..."
+              className="load-token-input"
+            />
+            <button className="load-button">Load →</button>
+          </div>
+        </section>
 
-        <div className="token-interactions">
-          <div className="interaction-tile">
-            <span className="details">
-              <p>transfer</p>
-              <span>send an amount of token to a user's address</span>
-            </span>
-
-            <span className="interaction-container">
-              <input placeholder="0x1234...abc"/>
-              <input placeholder="1000"/>
-              <button>Call</button>
-            </span>
+        {/* Functions Section */}
+        <section className="functions-container">
+          {/* Read Functions */}
+          <div className="function-column">
+            <div className="function-column-header">
+              <div className="column-title">
+                <span className="dot dot-blue"></span>
+                Read Functions
+              </div>
+              <span className="column-subtitle">No gas required</span>
+            </div>
+            <div className="function-list">
+              <ListTile title="name()" tag="VIEW" isExpanded={true} />
+              <ListTile title="symbol()" tag="VIEW" />
+              <ListTile title="decimals()" tag="VIEW" />
+              <ListTile title="totalSupply()" tag="VIEW" />
+              <ListTile title="balanceOf" tag="VIEW" />
+              <ListTile title="allowance" tag="VIEW" />
+            </div>
           </div>
 
-          <div className="interaction-tile">
-            <span className="details">
-              <p>approve</p>
-              <span>aan amount of token to a user's address</span>
-            </span>
-
-            <span className="interaction-container">
-              <input placeholder="0x1234...abc"/>
-              <input placeholder="1000"/>
-              <button>Call</button>
-            </span>
+          {/* Write Functions */}
+          <div className="function-column">
+            <div className="function-column-header">
+              <div className="column-title">
+                <span className="dot dot-purple"></span>
+                Write Functions
+              </div>
+              <span className="column-subtitle">Requires wallet</span>
+            </div>
+            <div className="function-list">
+              <ListTile title="mint" tag="WRITE" />
+              <ListTile title="transfer" tag="WRITE" />
+              <ListTile title="transferFrom" tag="WRITE" />
+              <ListTile title="approve" tag="WRITE" />
+            </div>
           </div>
-        </div>
-        </div>
-    </main>
+        </section>
+      </main>
+    </div>
   );
 };
 
