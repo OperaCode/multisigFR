@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Input, Button, Label } from '../ui';
 import { useMockContract } from '../../hooks';
-import { useAppContext } from '../../context';
+import { useAppContext } from '../../hooks';
 import { MdArrowUpward } from 'react-icons/md';
 
 interface Props {
