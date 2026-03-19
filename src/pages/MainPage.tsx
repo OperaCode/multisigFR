@@ -38,7 +38,34 @@ const MainPage: React.FC = () => {
             <span>100000000.00</span>
           </span>
         </div>
-        
+
+        <div className="token-interactions">
+          <div className="interaction-tile">
+            <span className="details">
+              <p>transfer</p>
+              <span>send an amount of token to a user's address</span>
+            </span>
+
+            <span className="interaction-container">
+              <input placeholder="0x1234...abc"/>
+              <input placeholder="1000"/>
+              <button>Call</button>
+            </span>
+          </div>
+
+          <div className="interaction-tile">
+            <span className="details">
+              <p>approve</p>
+              <span>send an amount of token to a user's address</span>
+            </span>
+
+            <span className="interaction-container">
+              <input placeholder="0x1234...abc"/>
+              <input placeholder="1000"/>
+              <button>Call</button>
+            </span>
+          </div>
+        </div>
         </div>
     </main>
   );
