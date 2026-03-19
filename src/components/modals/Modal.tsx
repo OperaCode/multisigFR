@@ -1,4 +1,4 @@
-import React, { useEffect, ReactNode } from "react";
+import React, { useEffect, type ReactNode } from "react";
 import { useApp } from "../../context/AppContext";
 
 interface ModalProps {

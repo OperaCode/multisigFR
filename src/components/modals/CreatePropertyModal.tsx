@@ -4,7 +4,7 @@ import { Input, Select } from "../ui/Input";
 import { Button } from "../ui/Button";
 import { useCreateProperty } from "../../hooks/contractHooks";
 import { useApp } from "../../context/AppContext";
-import { PropertyFormData } from "../../types";
+import { type PropertyFormData } from "../../types";
 import {
   PROPERTY_TYPE_OPTIONS,
   PROPERTY_CATEGORY_OPTIONS,
@@ -13,7 +13,7 @@ import {
 
 export function CreatePropertyModal() {
   const { closeModal, addToast, refreshProperties } = useApp();
-  const { createProperty, isLoading, isSuccess } = useCreateProperty();
+  const { createProperty, isLoading } = useCreateProperty();
 
   const [form, setForm] = useState<PropertyFormData>({
     amount: "",
