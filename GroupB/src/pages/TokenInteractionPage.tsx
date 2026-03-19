@@ -1,13 +1,15 @@
 import { useState } from "react";
-import "../token-interactions-page.css";
+import "../styles/token-interactions-page.css";
 import ListTile from "../components/ListTile";
 import type { ITokenDetail } from "../interface/ITokenDetail";
 import useCall from "../hooks/useCall";
 
 const TokenInteractionPage = ({
   tokenDetail,
+  onBack,
 }: {
   tokenDetail: ITokenDetail;
+  onBack?: () => void;
 }) => {
   const { loadToken, balanceOf, allowance, mint, transfer, transferFrom, approve } =
     useCall();
@@ -77,7 +79,7 @@ const TokenInteractionPage = ({
         {/* Token Header Card */}
         <section className="token-header-card">
           <div className="token-info-left">
-            <button className="back-button">← Back</button>
+            <button className="back-button" onClick={onBack}>← Back</button>
             <div className="token-logo">{tokenDetail.symbol.slice(0, 2)}</div>
             <div className="token-name-section">
               <h2>
