@@ -84,6 +84,7 @@ export const useTodo = () => {
     });
   }, []);
 
+  // Aadding of Todo
   const addTask = useCallback(() => {
     const trimmed = inputValue.trim();
     if (!trimmed) {
@@ -111,6 +112,7 @@ export const useTodo = () => {
     setInputValue("");
   }, [inputValue, tasks, updateAndPersist]);
 
+  //Marking Todo Completed
   const toggleTask = useCallback(
     (id: number) => {
       updateAndPersist((prev) =>
@@ -128,6 +130,7 @@ export const useTodo = () => {
     [updateAndPersist],
   );
 
+  //Delete Todo
   const deleteTask = useCallback(
     (id: number) => {
       if (editingId === id) {
@@ -139,12 +142,15 @@ export const useTodo = () => {
     [editingId, updateAndPersist],
   );
 
+
+  // Editing/Updating Of Todo
   const startEdit = useCallback((task: Task) => {
     setEditingId(task.id);
     setEditingText(task.text);
     setError("");
   }, []);
 
+  // Saving Edit
   const confirmEdit = useCallback(
     (id: number) => {
       const trimmed = editingText.trim();
@@ -177,6 +183,8 @@ export const useTodo = () => {
     setError("");
   }, []);
 
+
+  // 
   const clearCompleted = useCallback(() => {
     updateAndPersist((prev) => prev.filter((t) => !t.completed));
   }, [updateAndPersist]);
