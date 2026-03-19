@@ -31,7 +31,7 @@ export default function Settings() {
       await changeSigner(oldSigner, newSigner);
       toast.success("Signer changed successfully!");
       setOldSigner("");
-      setNewSigner("");
+      setNewSigner(" ");
     } catch (error) {
       console.error("Error changing signer:", error);
       toast.error(
