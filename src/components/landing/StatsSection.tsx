@@ -1,19 +1,6 @@
 import checkImg from '../../assets/landing/check.png'
 import securityImg from '../../assets/landing/data-security3.webp'
-
-const stats = [
-	{ id: 'stat-students', value: '10,000+', label: 'Students Enrolled' },
-	{ id: 'stat-faculty', value: '500+', label: 'Faculty Members' },
-	{ id: 'stat-transactions', value: '$2M+', label: 'Transactions Processed' },
-	{ id: 'stat-uptime', value: '99.9%', label: 'Uptime Guarantee' },
-]
-
-const securityChecks = [
-	'Ethereum L2 secured with full transparency',
-	'AES-256 encryption at rest & in transit',
-	'99.9% uptime SLA + daily on-chain backups',
-	'Multi-sig wallet protection for institutional funds',
-]
+import { landingSecurityChecks as securityChecks, landingStats as stats } from '../../data/mockData'
 
 function StatsSection() {
 	return (

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import {
-    overviewIcon,
+	overviewIcon,
+	ledgerIcon,
 	capIcon,
 	cardIcon,
 	logoutIcon,
@@ -19,13 +20,17 @@ type PortalNavProps = {
 }
 
 function NavIcon({ icon }: { icon: NavItem['icon'] }) {
-    if (icon === 'grid') {
-        return (
-            <img src={overviewIcon} alt="Overview" className="h-4.5 w-4.5" />
-        )
-    }
+	if (icon === 'grid') {
+		return (
+			<img src={overviewIcon} alt="Overview" className="h-4.5 w-4.5" />
+		)
+	}
 
-
+	if (icon === 'ledger') {
+		return (
+			<img src={ledgerIcon} alt="Academic Ledger" className="h-4.5 w-4.5" />
+		)
+	}
 
 	if (icon === 'users') {
 		return (
