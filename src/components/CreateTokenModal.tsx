@@ -210,6 +210,7 @@ export default function CreateTokenModal({
               background: "linear-gradient(90deg, #00e5ff, #00bcd4)",
               boxShadow: "0 4px 24px rgba(0,229,255,0.25)",
             }}
+            onClick={onClose}
           >
             Deploy Token
           </button>
