@@ -23,19 +23,23 @@ const StatusIcon = ({ status }: { status: TxnStatus }) => {
 };
 
 export function TransactionCard({ txn, signerAddresses = [], onSelect, selected }: TransactionCardProps) {
+  const handleSelect = () => onSelect?.(txn.id);
+
   return (
     <motion.div
+      layout
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      onClick={() => onSelect?.(txn.id)}
+      onClick={handleSelect}
       className={`
-        bg-surface border rounded-lg p-6 cursor-pointer transition-colors duration-200
+        bg-surface border rounded-2xl p-6 cursor-pointer transition-colors duration-200 min-h-[140px] sm:min-h-0
         ${selected ? "border-primary/60" : "border-border hover:border-primary/30"}
       `}
+      style={{ touchAction: "manipulation" }}
     >
-      <div className="grid grid-cols-[auto_1fr_auto] gap-6 items-center">
+      <div className="grid gap-5 sm:grid-cols-[auto_1fr_auto] sm:items-center">
         {/* Col 1: ID + Status */}
         <div className="flex flex-col items-center gap-2 min-w-[60px]">
           <span className="font-mono text-xs text-muted-foreground">#{txn.id}</span>

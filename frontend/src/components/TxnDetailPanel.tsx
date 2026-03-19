@@ -77,7 +77,7 @@ export function TxnDetailPanel({ txn, onClose, onInitialize, onAuthorize, onCanc
               {txn.approvals} of {MOCK_THRESHOLD} required
             </span>
             {txn.status === TxnStatus.pending && txn.approvals >= MOCK_THRESHOLD && (
-              <span className="text-xs text-success mt-1 block flex items-center gap-1">
+              <span className="text-xs text-success mt-1 flex items-center gap-1">
                 <CheckCircle2 className="h-3 w-3" />
                 Ready for execution
               </span>

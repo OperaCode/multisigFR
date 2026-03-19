@@ -3,18 +3,29 @@ import { truncateAddress } from "@/lib/multisig-types";
 import { MOCK_SIGNERS, MOCK_CONTRACT_ADDRESS, MOCK_VAULT_BALANCE, MOCK_TOKEN_SYMBOL } from "@/lib/mock-data";
 import { formatAmount } from "@/lib/multisig-types";
 import { useWallet } from "@/hooks/useWallet";
+import { NavLink } from "@/components/NavLink";
 
 const NAV_ITEMS = [
-  { label: "Dashboard", icon: LayoutDashboard, active: true },
+  { label: "Dashboard", icon: LayoutDashboard, active: true, path: "/" },
   { label: "Transactions", icon: History, active: false },
   { label: "Signers", icon: Users, active: false },
-  { label: "Settings", icon: Settings, active: false },
+  { label: "Settings", icon: Settings, active: false, path: "/settings" },
 ];
 
-export function VaultSidebar() {
+interface VaultSidebarProps {
+  className?: string;
+}
+
+export function VaultSidebar({ className }: VaultSidebarProps) {
     const { account, connectWallet } = useWallet();
   return (
-    <aside className="w-[280px] min-h-screen bg-sidebar border-r border-sidebar-border flex flex-col shrink-0">
+    <aside
+      aria-label="Vault navigation"
+      className={`
+        w-full max-w-[280px] min-h-screen bg-sidebar border-r border-sidebar-border flex flex-col shrink-0
+        ${className ?? ""}
+      `}
+    >
       {/* Logo */}
       <div className="p-6 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
@@ -46,22 +57,36 @@ export function VaultSidebar() {
       {/* Nav */}
       <nav className="p-4 flex-1">
         <ul className="space-y-1">
-          {NAV_ITEMS.map((item) => (
-            <li key={item.label}>
-              <button
-                className={`
-                  w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors
-                  ${item.active
-                    ? "bg-sidebar-accent text-foreground"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-foreground"
-                  }
-                `}
-              >
+          {NAV_ITEMS.map((item) => {
+            const baseNavClasses =
+              "w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors";
+            const activeClasses = "bg-sidebar-accent text-foreground";
+            const inactiveClasses = "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-foreground";
+            const buttonContent = (
+              <>
                 <item.icon className="h-4 w-4" />
                 <span>{item.label}</span>
-              </button>
-            </li>
-          ))}
+              </>
+            );
+
+            return (
+              <li key={item.label}>
+                {item.path ? (
+                  <NavLink
+                    to={item.path}
+                    className={`${baseNavClasses} ${inactiveClasses}`}
+                    activeClassName={`${baseNavClasses} ${activeClasses}`}
+                  >
+                    {buttonContent}
+                  </NavLink>
+                ) : (
+                  <button className={`${baseNavClasses} ${item.active ? activeClasses : inactiveClasses}`}>
+                    {buttonContent}
+                  </button>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </nav>
 
