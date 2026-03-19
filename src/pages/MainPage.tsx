@@ -56,7 +56,7 @@ const MainPage: React.FC = () => {
           <div className="interaction-tile">
             <span className="details">
               <p>approve</p>
-              <span>send an amount of token to a user's address</span>
+              <span>aan amount of token to a user's address</span>
             </span>
 
             <span className="interaction-container">
