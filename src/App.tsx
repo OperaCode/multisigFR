@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes, Outlet } from 'react-router-dom'
 import PortalNav from './components/PortalNav'
 import Overview from './pages/overview'
-import FacultyPortal from './pages/falcutyportal'
+import FacultyPortal from './pages/FalcutyPortal'
 import ClaimPortal from './pages/claimportal'
 import StudentRegistry from './pages/studentRegistry'
 import AcademicLedger from './pages/academyledger'
