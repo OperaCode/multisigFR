@@ -1,27 +1,37 @@
-
 import { useState } from 'react'
-import SplashPage from './components/SplashPage'
-import ERC20Page from './components/ERC20page'
-import './App.css'
+// import SplashPage from './components/SplashPage'
+import TokenInteractionPage from "./pages/TokenInteractionPage";
+import ERC20Page from './components/ERC20page';
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import TokenRegistry from './components/TokenRegistry';
 
-type Page = 'splash' | 'erc20'
+type Page = 'splash' | 'main' | 'tokenRegistry';
 
 export default function App() {
   const [page, setPage] = useState<Page>('splash')
 
   return (
-    <div className="w-screen h-screen overflow-hidden">
-      {page === 'splash' && (
-        <SplashPage onComplete={() => setPage('erc20')} />
-      )}
-      {page === 'erc20' && (
-         <Navbar />
-        <ERC20Page />
-      )}
-    </div>
-  )
-}
+    <>
+    122
+      {/* {page === 'splash' && (
+        <SplashPage onComplete={() => setPage('main')} />
+      )} */}
 
-export default App;
-
+      {/* {page === 'main' && ( */}
+        <>
+          <Navbar />
+          <ERC20Page />
+          {/* <TokenInteractionPage tokenDetail={{
+            name: "Group B Token",
+            symbol: "GRP-B",
+            decimals: 18,
+            totalSupply: "100000000"
+          }}/> */}
+          <TokenRegistry/>
+          <Footer/>
+        </>
+      {/* )} */}
+    </>
+  );
+};

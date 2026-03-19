@@ -56,23 +56,23 @@ export default function ERC20Panel({ visible }: ERC20PanelProps) {
   return (
     <div
       ref={panelRef}
-      className="fixed inset-0 z-30 flex items-center justify-center pointer-events-none"
-      style={{ opacity: 0, padding: '60px 48px 80px' }}
+      className="relative inset-0 z-30 flex items-center justify-center pointer-events-none"
+      style={{ opacity: 0, padding: 'clamp(12px, 4vw, 80px) clamp(12px, 3vw, 48px) clamp(12px, 4vw, 80px)' }}
     >
-      <div className="relative z-[1] w-full max-w-[960px] grid grid-cols-2 gap-x-[72px] gap-y-[48px] items-start">
+      <div className="relative z-[1] w-full max-w-[960px] grid grid-cols-1 md:grid-cols-2 gap-x-[32px] md:gap-x-[72px] gap-y-[32px] md:gap-y-[48px] items-start px-4 md:px-0">
         <div>
           <div
             ref={eyebrowRef}
             className="text-[9px] tracking-[0.38em] uppercase mb-4 flex items-center gap-[10px]"
-            style={{ color: '#00eaff', textShadow: '0 0 14px rgba(0,234,255,0.6)' }}
+            style={{ color: 'var(--accent-cyan)', textShadow: '0 0 14px rgba(0, 229, 255, 0.6)' }}
           >
           </div>
 
           <div
             ref={titleRef}
-            className="font-['Bebas_Neue'] leading-[0.92] tracking-[0.02em] mb-6 text-white"
+            className="font-['Bebas_Neue'] leading-[0.92] tracking-[0.02em] mb-4 md:mb-6 text-white"
             style={{
-              fontSize: 'clamp(52px,7vw,88px)',
+              fontSize: 'clamp(36px, 6vw, 88px)',
               textShadow: '0 2px 40px rgba(0,0,0,0.55), 0 0 80px rgba(26,107,224,0.3)',
             }}
           >
@@ -111,17 +111,17 @@ export default function ERC20Panel({ visible }: ERC20PanelProps) {
             ].map(({ val, key }) => (
               <div
                 key={key}
-                className="relative overflow-hidden p-[14px_16px] backdrop-blur-[6px]"
+                className="relative  p-[14px_16px] backdrop-blur-[6px]"
                 style={{
                   background: 'rgba(0,0,0,0.32)',
-                  border: '1px solid rgba(0,234,255,0.22)',
+                  border: '1px solid rgba(0,229,255,0.22)',
                 }}
               >
                 <div className="absolute top-0 left-0 right-0 h-[1.5px]"
-                     style={{ background: 'linear-gradient(90deg,transparent,rgba(0,234,255,0.6),transparent)' }} />
+                     style={{ background: 'linear-gradient(90deg,transparent,rgba(0,229,255,0.6),transparent)' }} />
                 <div
                   className="font-['Bebas_Neue'] text-[30px] tracking-[0.04em] leading-none"
-                  style={{ color: '#00eaff', textShadow: '0 0 16px rgba(0,234,255,0.5)' }}
+                  style={{ color: 'var(--accent-cyan)', textShadow: '0 0 16px rgba(0,229,255,0.5)' }}
                 >{val}</div>
                 <div
                   className="font-['DM_Mono'] text-[8px] tracking-[0.22em] uppercase mt-1"
@@ -148,17 +148,17 @@ export default function ERC20Panel({ visible }: ERC20PanelProps) {
               <div
                 key={label}
                 className="flex items-start gap-3 py-[10px]"
-                style={{ borderBottom: '1px solid rgba(0,234,255,0.12)' }}
+                style={{ borderBottom: '1px solid rgba(0,229,255,0.12)' }}
               >
                 <span
                   className="text-[13px] flex-shrink-0 mt-[1px]"
-                  style={{ color: 'rgba(0,234,255,0.7)', textShadow: '0 0 8px rgba(0,234,255,0.5)' }}
+                  style={{ color: 'rgba(0,229,255,0.7)', textShadow: '0 0 8px rgba(0,229,255,0.5)' }}
                 >◈</span>
                 <span
                   className="font-['DM_Mono'] text-[11.5px] leading-[1.65] tracking-[0.01em]"
                   style={{ color: 'rgba(255,255,255,0.70)', textShadow: '0 1px 6px rgba(0,0,0,0.4)' }}
                 >
-                  <strong style={{ color: '#00eaff', fontWeight: 500, textShadow: '0 0 10px rgba(0,234,255,0.4)' }}>
+                  <strong style={{ color: 'var(--accent-cyan)', fontWeight: 500, textShadow: '0 0 10px rgba(0,229,255,0.4)' }}>
                     {label}
                   </strong>
                   {' — '}{body}
@@ -171,27 +171,27 @@ export default function ERC20Panel({ visible }: ERC20PanelProps) {
             className="inline-flex items-center gap-[10px] font-['DM_Mono'] text-[10px] tracking-[0.28em] uppercase backdrop-blur-[8px] pointer-events-auto group"
             style={{
               padding: '14px 28px',
-              color: '#00eaff',
+              color: 'var(--accent-cyan)',
               background: 'rgba(0,0,0,0.35)',
-              border: '1px solid rgba(0,234,255,0.45)',
+              border: '1px solid rgba(0,229,255,0.45)',
               clipPath: 'polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))',
-              textShadow: '0 0 12px rgba(0,234,255,0.5)',
+              textShadow: '0 0 12px rgba(0,229,255,0.5)',
               opacity: 0,
             }}
             onMouseEnter={e => {
               const el = e.currentTarget
-              el.style.background    = 'rgba(0,234,255,0.12)'
-              el.style.borderColor   = 'rgba(0,234,255,0.85)'
+              el.style.background    = 'rgba(0,229,255,0.12)'
+              el.style.borderColor   = 'rgba(0,229,255,0.85)'
               el.style.color         = '#fff'
-              el.style.textShadow    = '0 0 20px rgba(0,234,255,0.8)'
-              el.style.boxShadow     = '0 0 28px rgba(0,234,255,0.18), inset 0 0 20px rgba(0,234,255,0.04)'
+              el.style.textShadow    = '0 0 20px rgba(0,229,255,0.8)'
+              el.style.boxShadow     = '0 0 28px rgba(0,229,255,0.18), inset 0 0 20px rgba(0,229,255,0.04)'
             }}
             onMouseLeave={e => {
               const el = e.currentTarget
               el.style.background    = 'rgba(0,0,0,0.35)'
-              el.style.borderColor   = 'rgba(0,234,255,0.45)'
-              el.style.color         = '#00eaff'
-              el.style.textShadow    = '0 0 12px rgba(0,234,255,0.5)'
+              el.style.borderColor   = 'rgba(0,229,255,0.45)'
+              el.style.color         = 'var(--accent-cyan)'
+              el.style.textShadow    = '0 0 12px rgba(0,229,255,0.5)'
               el.style.boxShadow     = ''
             }}
           >
