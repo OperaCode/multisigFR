@@ -23,24 +23,26 @@ export default function CreateTokenModal({
     initialSupply: "1000000",
   });
 
-  if (!isOpen) return null;
+  // ✅ Moved above early return — hooks must never be called conditionally
+  const [errors, setErrors] = useState<Partial<TokenData>>({});
 
-    const [errors, setErrors] = useState<Partial<TokenData>>({});
+  // ✅ Early return comes after all hooks
+  if (!isOpen) return null;
 
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<string, string>> = {};
 
     if (!form.tokenName.trim()) {
-      newErrors.tokenName = 'Token name is required';
+      newErrors.tokenName = "Token name is required";
     }
     if (!form.symbol.trim()) {
-      newErrors.symbol = 'Symbol is required';
+      newErrors.symbol = "Symbol is required";
     }
     if (Number(form.decimals) < 0 || Number(form.decimals) > 18) {
-      newErrors.decimals = 'Decimals must be between 0 and 18';
+      newErrors.decimals = "Decimals must be between 0 and 18";
     }
     if (Number(form.initialSupply) <= 0) {
-      newErrors.initialSupply = 'Initial supply must be greater than 0';
+      newErrors.initialSupply = "Initial supply must be greater than 0";
     }
 
     setErrors(newErrors as Partial<TokenData>);
@@ -127,7 +129,6 @@ export default function CreateTokenModal({
                   border: "1px solid rgba(255,255,255,0.07)",
                 }}
               />
-
               {errors.tokenName && (
                 <p className="mt-1 text-xs text-red-500">{errors.tokenName}</p>
               )}
@@ -151,7 +152,6 @@ export default function CreateTokenModal({
                   border: "1px solid rgba(255,255,255,0.07)",
                 }}
               />
-
               {errors.symbol && (
                 <p className="mt-1 text-xs text-red-500">{errors.symbol}</p>
               )}
@@ -174,9 +174,8 @@ export default function CreateTokenModal({
                   border: "1px solid rgba(255,255,255,0.07)",
                 }}
               />
-
-              {errors.symbol && (
-                <p className="mt-1 text-xs text-red-500">{errors.symbol}</p>
+              {errors.decimals && (
+                <p className="mt-1 text-xs text-red-500">{errors.decimals}</p>
               )}
             </div>
 
@@ -197,20 +196,24 @@ export default function CreateTokenModal({
                   border: "1px solid rgba(255,255,255,0.07)",
                 }}
               />
-
               {errors.initialSupply && (
-                <p className="mt-1 text-xs text-red-500">{errors.initialSupply}</p>
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.initialSupply}
+                </p>
               )}
             </div>
           </div>
 
+          {/* ✅ validateForm called on click — closes only if validation passes */}
           <button
             className="w-full py-4 rounded-xl text-[#0a0f1e] font-bold text-sm tracking-wide hover:brightness-110 transition-all cursor-pointer"
             style={{
               background: "linear-gradient(90deg, #00e5ff, #00bcd4)",
               boxShadow: "0 4px 24px rgba(0,229,255,0.25)",
             }}
-            onClick={onClose}
+            onClick={() => {
+              if (validateForm()) onClose();
+            }}
           >
             Deploy Token
           </button>
