@@ -2,24 +2,73 @@ import type React from "react";
 import { useState } from "react";
 import "../token-interactions-page.css";
 import ListTile from "../components/ListTile";
-import type { ITokenDetail, ITokenInteraction } from "../interface/ITokenDetail";
+import type { ITokenDetail } from "../interface/ITokenDetail";
+import useCall from "../hooks/useCall";
 
-interface TokenInteractionPageProps {
-  tokenDetail: ITokenDetail;
-  interaction?: ITokenInteraction;
-}
-
-const TokenInteractionPage: React.FC<TokenInteractionPageProps> = ({
+const TokenInteractionPage = ({
   tokenDetail,
+}: {
+  tokenDetail: ITokenDetail;
 }) => {
+  const { balanceOf, allowance, mint, transfer, transferFrom, approve } =
+    useCall();
+
   const [expandedTile, setExpandedTile] = useState<string | null>("balanceOf");
 
   const toggleTile = (title: string) => {
-    setExpandedTile(prev => (prev === title ? null : title));
+    setExpandedTile((prev) => (prev === title ? null : title));
   };
 
   const handleCall = (method: string, inputs: string[]) => {
-    alert(`${method} called with: ${inputs.join(", ")}`);
+    inputs = inputs.map(input => input.replaceAll(" ", ""));
+
+    switch (method) {
+      case "balanceOf":
+        if (inputs.length !== 1) {
+          console.error("A Weird error has occured");
+          return;
+        }
+        balanceOf(inputs[0]);
+        break;
+      case "allowance":
+        if (inputs.length !== 2) {
+          console.error("A Weird error has occured");
+          return;
+        }
+        allowance(inputs[0], inputs[1]);
+        break;
+      case "mint":
+        if (inputs.length !== 2) {
+          console.error("A Weird error has occured");
+          return;
+        }
+        mint(inputs[0], inputs[1]);
+        break;
+      case "transfer":
+        if (inputs.length !== 2) {
+          console.error("A Weird error has occured");
+          return;
+        }
+        transfer(inputs[0], inputs[1]);
+        break;
+      case "transferFrom":
+        if (inputs.length !== 3) {
+          console.error("A Weird error has occured");
+          return;
+        }
+        transferFrom(inputs[0], inputs[1], inputs[2]);
+        break;
+      case "approve":
+        if (inputs.length !== 2) {
+          console.error("A Weird error has occured");
+          return;
+        }
+        approve(inputs[0], inputs[1]);
+        break;
+
+      default:
+        break;
+    }
   };
 
   return (
@@ -32,11 +81,12 @@ const TokenInteractionPage: React.FC<TokenInteractionPageProps> = ({
             <div className="token-logo">{tokenDetail.symbol.slice(0, 2)}</div>
             <div className="token-name-section">
               <h2>
-                {tokenDetail.name} <span className="token-symbol">({tokenDetail.symbol})</span>
+                {tokenDetail.name}{" "}
+                <span className="token-symbol">({tokenDetail.symbol})</span>
               </h2>
               <div className="token-address">
                 0xA1b2C3d4...7890
-                <span style={{ cursor: 'pointer', opacity: 0.6 }}>📋</span>
+                <span style={{ cursor: "pointer", opacity: 0.6 }}>📋</span>
               </div>
             </div>
           </div>
@@ -44,7 +94,9 @@ const TokenInteractionPage: React.FC<TokenInteractionPageProps> = ({
 
         {/* Load Token Section */}
         <section className="load-token-section">
-          <span className="load-token-label">Test a different token address</span>
+          <span className="load-token-label">
+            Test a different token address
+          </span>
           <div className="load-token-input-container">
             <input
               type="text"
@@ -87,19 +139,19 @@ const TokenInteractionPage: React.FC<TokenInteractionPageProps> = ({
               <span className="column-subtitle">No gas required</span>
             </div>
             <div className="function-list">
-              <ListTile 
-                title="balanceOf" 
-                tag="VIEW" 
-                isExpanded={expandedTile === "balanceOf"} 
-                onToggle={() => toggleTile("balanceOf")} 
+              <ListTile
+                title="balanceOf"
+                tag="VIEW"
+                isExpanded={expandedTile === "balanceOf"}
+                onToggle={() => toggleTile("balanceOf")}
                 placeholders={["account"]}
                 onCall={(inputs) => handleCall("balanceOf", inputs)}
               />
-              <ListTile 
-                title="allowance" 
-                tag="VIEW" 
-                isExpanded={expandedTile === "allowance"} 
-                onToggle={() => toggleTile("allowance")} 
+              <ListTile
+                title="allowance"
+                tag="VIEW"
+                isExpanded={expandedTile === "allowance"}
+                onToggle={() => toggleTile("allowance")}
                 placeholders={["owner", "spender"]}
                 onCall={(inputs) => handleCall("allowance", inputs)}
               />
@@ -116,35 +168,35 @@ const TokenInteractionPage: React.FC<TokenInteractionPageProps> = ({
               <span className="column-subtitle">Requires wallet</span>
             </div>
             <div className="function-list">
-              <ListTile 
-                title="mint" 
-                tag="WRITE" 
-                isExpanded={expandedTile === "mint"} 
+              <ListTile
+                title="mint"
+                tag="WRITE"
+                isExpanded={expandedTile === "mint"}
                 onToggle={() => toggleTile("mint")}
                 placeholders={["address", "amount"]}
                 onCall={(inputs) => handleCall("mint", inputs)}
               />
-              <ListTile 
-                title="transfer" 
-                tag="WRITE" 
-                isExpanded={expandedTile === "transfer"} 
-                onToggle={() => toggleTile("transfer")} 
+              <ListTile
+                title="transfer"
+                tag="WRITE"
+                isExpanded={expandedTile === "transfer"}
+                onToggle={() => toggleTile("transfer")}
                 placeholders={["to", "amount"]}
                 onCall={(inputs) => handleCall("transfer", inputs)}
               />
-              <ListTile 
-                title="transferFrom" 
-                tag="WRITE" 
-                isExpanded={expandedTile === "transferFrom"} 
+              <ListTile
+                title="transferFrom"
+                tag="WRITE"
+                isExpanded={expandedTile === "transferFrom"}
                 onToggle={() => toggleTile("transferFrom")}
                 placeholders={["from", "to", "amount"]}
                 onCall={(inputs) => handleCall("transferFrom", inputs)}
               />
-              <ListTile 
-                title="approve" 
-                tag="WRITE" 
-                isExpanded={expandedTile === "approve"} 
-                onToggle={() => toggleTile("approve")} 
+              <ListTile
+                title="approve"
+                tag="WRITE"
+                isExpanded={expandedTile === "approve"}
+                onToggle={() => toggleTile("approve")}
                 placeholders={["spender", "amount"]}
                 onCall={(inputs) => handleCall("approve", inputs)}
               />

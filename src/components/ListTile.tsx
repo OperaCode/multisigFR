@@ -19,12 +19,6 @@ const ListTile: React.FC<ListTileProps> = ({
     setInputs(newInputs);
   };
 
-  const handleCall = () => {
-    if (onCall) {
-      onCall(inputs);
-    }
-  };
-
   return (
     <div className={`interaction-tile ${isExpanded ? "tile--expanded" : ""}`}>
       <div className="tile-header" onClick={onToggle}>
@@ -67,7 +61,7 @@ const ListTile: React.FC<ListTileProps> = ({
               )}
               <button 
                 className="call-button"
-                onClick={handleCall}
+                onClick={() => onCall!(inputs)}
                 style={isWrite ? {
                   background: "var(--accent-purple)",
                   boxShadow: "0 0 12px rgba(168, 85, 247, 0.4)",
