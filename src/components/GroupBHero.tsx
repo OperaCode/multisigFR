@@ -105,7 +105,7 @@ export default function GroupBHero() {
   const ticks = Array.from({ length: 19 }, (_, i) => i + 1)
 
   return (
-    <div className="w-full h-full overflow-hidden bg-white font-['DM_Mono']">
+    <div className="w-full h-full  bg-white font-['DM_Mono']">
 
       <video
         className="fixed inset-0 z-0 w-full h-full object-cover opacity-0 transition-opacity duration-[600ms]"

@@ -56,7 +56,7 @@ export default function ERC20Panel({ visible }: ERC20PanelProps) {
   return (
     <div
       ref={panelRef}
-      className="fixed inset-0 z-30 flex items-center justify-center pointer-events-none"
+      className="relative inset-0 z-30 flex items-center justify-center pointer-events-none"
       style={{ opacity: 0, padding: 'clamp(12px, 4vw, 80px) clamp(12px, 3vw, 48px) clamp(12px, 4vw, 80px)' }}
     >
       <div className="relative z-[1] w-full max-w-[960px] grid grid-cols-1 md:grid-cols-2 gap-x-[32px] md:gap-x-[72px] gap-y-[32px] md:gap-y-[48px] items-start px-4 md:px-0">
@@ -111,7 +111,7 @@ export default function ERC20Panel({ visible }: ERC20PanelProps) {
             ].map(({ val, key }) => (
               <div
                 key={key}
-                className="relative overflow-hidden p-[14px_16px] backdrop-blur-[6px]"
+                className="relative  p-[14px_16px] backdrop-blur-[6px]"
                 style={{
                   background: 'rgba(0,0,0,0.32)',
                   border: '1px solid rgba(0,229,255,0.22)',

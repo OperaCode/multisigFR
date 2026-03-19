@@ -163,7 +163,7 @@ export default function ERC20Page() {
   }, [])
 
   return (
-    <div className="w-full h-full overflow-hidden" style={{ background: '#000000' }}>
+    <div className="w-full relative" style={{ background: '#000000' }}>
 
       {/* Gold light canvas — fills entire viewport behind everything */}
       <canvas
@@ -183,7 +183,7 @@ export default function ERC20Page() {
 
       {/* Connect Wallet button */}
       <button
-        className="fixed top-5 right-7 z-[100] flex items-center gap-2 font-['DM_Mono'] text-[9px] tracking-[0.28em] uppercase transition-all duration-[350ms]"
+        className="fixed top-5 right-7 z-40 flex items-center gap-2 font-['DM_Mono'] text-[9px] tracking-[0.28em] uppercase transition-all duration-[350ms]"
         style={{
           padding: '8px 18px',
           background: 'transparent',
@@ -224,7 +224,7 @@ export default function ERC20Page() {
       </button>
 
       {/* Main content — above canvas */}
-      <div className="relative z-10 w-full h-full">
+      <div className="relative z-20 w-full">
         <ERC20Panel visible={true} />
         <CryptoTicker />
       </div>

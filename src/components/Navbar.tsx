@@ -8,7 +8,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className="w-full flex items-center justify-between px-4 md:px-6 py-3 relative"
+        className="w-full flex items-center justify-between px-4 md:px-6 py-3 relative z-50"
         style={{
           background: "var(--bg-darkest)",
           borderBottom: "1px solid var(--border-card)",
