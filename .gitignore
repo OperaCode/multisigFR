@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 
 .bash_profile
+references
