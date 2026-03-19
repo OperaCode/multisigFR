@@ -1,7 +1,6 @@
 // src/components/cards/AccountCard.tsx
 import React from 'react';
 import { type Account } from '../../types/IMultisig';
-import { truncateAddress } from '../../utils/mockData';
 
 interface AccountCardProps {
   account: Account;
