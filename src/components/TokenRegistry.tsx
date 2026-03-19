@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { ITokenDetail } from "../interface/ITokenDetail";
 
 const tokens = [
   { symbol: "CR", name: "CryptoX", ticker: "CRX", contractAddress: "0xA1b2C3d4...7890", deployer: "0x9f8e7d6c...5b4a", supply: "10,000,000", date: "2025-03-12" },
@@ -17,9 +18,12 @@ function CopyIcon({ copied }: { copied: boolean }) {
   );
 }
 
-export default function TokenRegistry() {
+export default function TokenRegistry({
+  onTestToken,
+}: {
+  onTestToken?: (tokenDetail: ITokenDetail) => void;
+}) {
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [hoveredRow, setHoveredRow] = useState<number | null>(null);
 
   const handleCopy = (text: string, fieldId: string) => {
     navigator.clipboard.writeText(text);
@@ -81,7 +85,7 @@ export default function TokenRegistry() {
                 </thead>
                 <tbody>
                   {tokens.map((token, idx) => (
-                    <tr key={token.ticker} className="reg-tr" onMouseEnter={() => setHoveredRow(idx)} onMouseLeave={() => setHoveredRow(null)}>
+                    <tr key={token.ticker} className="reg-tr">
                       <td>
                         <div className="reg-token-wrap">
                           <div className="reg-avatar">{token.symbol}</div>
@@ -109,7 +113,21 @@ export default function TokenRegistry() {
                       </td>
                       <td><span className="reg-supply">{token.supply}</span></td>
                       <td><span className="reg-date">{token.date}</span></td>
-                      <td><button className="reg-test-btn">Test →</button></td>
+                      <td>
+                        <button
+                          className="reg-test-btn"
+                          onClick={() =>
+                            onTestToken?.({
+                              name: token.name,
+                              symbol: token.ticker,
+                              decimals: 18,
+                              totalSupply: token.supply,
+                            })
+                          }
+                        >
+                          Test →
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
