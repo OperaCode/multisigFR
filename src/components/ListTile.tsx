@@ -1,12 +1,6 @@
 import type React from "react";
-
-interface ListTileProps {
-  title: string;
-  tag: "VIEW" | "WRITE";
-  isExpanded: boolean;
-  onToggle: () => void;
-  placeholders: string[] | null;
-}
+import { useState } from "react";
+import type { ListTileProps } from "../interface/IListTile";
 
 const ListTile: React.FC<ListTileProps> = ({
   title,
@@ -14,14 +8,30 @@ const ListTile: React.FC<ListTileProps> = ({
   isExpanded,
   onToggle,
   placeholders,
+  onCall
 }) => {
+  const isWrite = tag === "WRITE";
+  const [inputs, setInputs] = useState<string[]>(new Array(placeholders?.length || 0).fill(""));
+
+  const handleInputChange = (index: number, value: string) => {
+    const newInputs = [...inputs];
+    newInputs[index] = value;
+    setInputs(newInputs);
+  };
+
+  const handleCall = () => {
+    if (onCall) {
+      onCall(inputs);
+    }
+  };
+
   return (
     <div className={`interaction-tile ${isExpanded ? "tile--expanded" : ""}`}>
       <div className="tile-header" onClick={onToggle}>
         <div className="tile-title-group">
           <span className="tile-title">{title}</span>
           <span
-            className={`tile-tag ${tag === "VIEW" ? "tag-view" : "tag-write"}`}
+            className={`tile-tag ${isWrite ? "tag-write" : "tag-view"}`}
           >
             {tag}
           </span>
@@ -32,65 +42,41 @@ const ListTile: React.FC<ListTileProps> = ({
       <div className="tile-accordion-wrapper">
         <div className="tile-accordion-inner">
           <div className="tile-expanded-content">
-            {tag === "VIEW" ? (
-              <div
-                style={{
-                  display: "flex",
-                  gap: "12px",
-                  width: "100%",
-                  flexWrap: "wrap",
-                }}
-              >
-                {placeholders?.map((placeholder, index) => (
-                  <input
-                    key={index}
-                    className="load-token-input"
-                    style={{ flex: 1, height: "40px" }}
-                    placeholder={placeholder}
-                  />
-                ))}
-                <button className="call-button">Call</button>
-              </div>
-            ) : (
-              <div className="interaction-container">
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "12px",
-                    width: "100%",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <input
-                    className="load-token-input"
-                    style={{ flex: 1, height: "40px" }}
-                    placeholder="address"
-                  />
-                  <input
-                    className="load-token-input"
-                    style={{ flex: 1, height: "40px" }}
-                    placeholder="amount"
-                  />
-                  {title == "transferFrom" && (
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                width: "100%",
+                flexWrap: "wrap",
+                alignItems: "center"
+              }}
+            >
+              {placeholders && placeholders.length > 0 && (
+                <div style={{ display: 'flex', gap: '12px', flex: 1, flexWrap: 'wrap' }}>
+                  {placeholders.map((placeholder, index) => (
                     <input
+                      key={index}
                       className="load-token-input"
-                      style={{ flex: 1, height: "40px" }}
-                      placeholder="amount"
+                      style={{ flex: 1, minWidth: '150px', height: "40px" }}
+                      placeholder={placeholder}
+                      value={inputs[index]}
+                      onChange={(e) => handleInputChange(index, e.target.value)}
                     />
-                  )}
-
-                  <button
-                    className="call-button"
-                    style={{
-                      background: "var(--accent-purple)",
-                      boxShadow: "0 0 12px rgba(168, 85, 247, 0.4)",
-                    }}
-                  >
-                    Call
-                  </button>
+                  ))}
                 </div>
-              </div>
-            )}
+              )}
+              <button 
+                className="call-button"
+                onClick={handleCall}
+                style={isWrite ? {
+                  background: "var(--accent-purple)",
+                  boxShadow: "0 0 12px rgba(168, 85, 247, 0.4)",
+                  borderColor: "transparent"
+                } : {}}
+              >
+                Call
+              </button>
+            </div>
           </div>
         </div>
       </div>

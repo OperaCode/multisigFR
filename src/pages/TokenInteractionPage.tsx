@@ -2,15 +2,24 @@ import type React from "react";
 import { useState } from "react";
 import "../token-interactions-page.css";
 import ListTile from "../components/ListTile";
-import type { ITokenDetail } from "../interface/ITokenDetail";
+import type { ITokenDetail, ITokenInteraction } from "../interface/ITokenDetail";
 
-const TokenInteractionPage = (
-  {tokenDetail} : {tokenDetail: ITokenDetail}
-) => {
+interface TokenInteractionPageProps {
+  tokenDetail: ITokenDetail;
+  interaction?: ITokenInteraction;
+}
+
+const TokenInteractionPage: React.FC<TokenInteractionPageProps> = ({
+  tokenDetail,
+}) => {
   const [expandedTile, setExpandedTile] = useState<string | null>("balanceOf");
 
   const toggleTile = (title: string) => {
     setExpandedTile(prev => (prev === title ? null : title));
+  };
+
+  const handleCall = (method: string, inputs: string[]) => {
+    alert(`${method} called with: ${inputs.join(", ")}`);
   };
 
   return (
@@ -84,6 +93,7 @@ const TokenInteractionPage = (
                 isExpanded={expandedTile === "balanceOf"} 
                 onToggle={() => toggleTile("balanceOf")} 
                 placeholders={["account"]}
+                onCall={(inputs) => handleCall("balanceOf", inputs)}
               />
               <ListTile 
                 title="allowance" 
@@ -91,6 +101,7 @@ const TokenInteractionPage = (
                 isExpanded={expandedTile === "allowance"} 
                 onToggle={() => toggleTile("allowance")} 
                 placeholders={["owner", "spender"]}
+                onCall={(inputs) => handleCall("allowance", inputs)}
               />
             </div>
           </div>
@@ -111,6 +122,7 @@ const TokenInteractionPage = (
                 isExpanded={expandedTile === "mint"} 
                 onToggle={() => toggleTile("mint")}
                 placeholders={["address", "amount"]}
+                onCall={(inputs) => handleCall("mint", inputs)}
               />
               <ListTile 
                 title="transfer" 
@@ -118,13 +130,15 @@ const TokenInteractionPage = (
                 isExpanded={expandedTile === "transfer"} 
                 onToggle={() => toggleTile("transfer")} 
                 placeholders={["to", "amount"]}
+                onCall={(inputs) => handleCall("transfer", inputs)}
               />
               <ListTile 
                 title="transferFrom" 
                 tag="WRITE" 
                 isExpanded={expandedTile === "transferFrom"} 
                 onToggle={() => toggleTile("transferFrom")}
-                placeholders={["owner", "account", "amount"]}
+                placeholders={["from", "to", "amount"]}
+                onCall={(inputs) => handleCall("transferFrom", inputs)}
               />
               <ListTile 
                 title="approve" 
@@ -132,6 +146,7 @@ const TokenInteractionPage = (
                 isExpanded={expandedTile === "approve"} 
                 onToggle={() => toggleTile("approve")} 
                 placeholders={["spender", "amount"]}
+                onCall={(inputs) => handleCall("approve", inputs)}
               />
             </div>
           </div>
