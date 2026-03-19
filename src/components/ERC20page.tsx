@@ -1,9 +1,9 @@
 'use client'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, memo } from 'react'
 import ERC20Panel from './ERC20panel'
 import CryptoTicker from './CryptoTicker'
 
-export default function ERC20Page() {
+const ERC20Page = memo(function ERC20Page() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -237,4 +237,6 @@ export default function ERC20Page() {
       `}</style>
     </div>
   )
-}
+})
+
+export default ERC20Page
