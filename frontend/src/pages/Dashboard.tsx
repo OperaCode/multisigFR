@@ -16,13 +16,20 @@ type FilterType = "all" | "pending" | "successful" | "canceled";
 const FILTERS: { label: string; value: FilterType }[] = [
   { label: "All", value: "all" },
   { label: "Pending", value: "pending" },
+  { label: "Approved by Me", value: "approved" },
   { label: "Executed", value: "successful" },
   { label: "Canceled", value: "canceled" },
 ];
 
-const FILTER_MAP: Record<FilterType, TxnStatus | null> = {
+const FILTER_MAP: Record<FilterType, ((t: Transaction, account: string | null) => boolean) | TxnStatus | null> = {
   all: null,
   pending: TxnStatus.pending,
+  approved: (t, account) => {
+    if (!account) return false;
+    if (t.status !== TxnStatus.approved) return false;
+    // Case-insensitive address comparison
+    return t.approvers?.some(a => a.toLowerCase() === account.toLowerCase()) || false;
+  },
   successful: TxnStatus.successful,
   canceled: TxnStatus.canceled,
 };
@@ -75,6 +82,7 @@ export default function Dashboard() {
       status: TxnStatus.pending,
       txnInitiator: account, // Use connected wallet address
       executedTime: 0,
+      approvers: [],
     };
 
     setTransactions([newTxn, ...transactions]);
@@ -84,11 +92,165 @@ export default function Dashboard() {
     });
   };
 
+  // Initialize transaction (first approval by initiator)
+  const handleInitialize = (txnId: number) => {
+    if (!account) {
+      toast({
+        title: "Wallet Required",
+        description: "Please connect your wallet first",
+        variant: "destructive",
+      });
+      connectWallet();
+      return;
+    }
+
+    setTransactions((prev) =>
+      prev.map((txn) => {
+        if (txn.id !== txnId) return txn;
+        if (txn.initiatorApproved || txn.executed || txn.status === TxnStatus.canceled) {
+          return txn;
+        }
+
+        const newApprovals = txn.approvals + 1;
+        const newApprovers = [...(txn.approvers || []), account];
+        let newStatus = newApprovals >= MOCK_THRESHOLD ? TxnStatus.successful : TxnStatus.approved;
+        let newExecuted = txn.executed;
+        let newExecutedTime = txn.executedTime;
+
+        // Auto-execute if threshold reached
+        if (newApprovals >= MOCK_THRESHOLD) {
+          newExecuted = true;
+          newExecutedTime = Math.floor(Date.now() / 1000);
+        }
+
+        return {
+          ...txn,
+          initiatorApproved: true,
+          approvals: newApprovals,
+          approvers: newApprovers,
+          status: newStatus,
+          executed: newExecuted,
+          executedTime: newExecutedTime,
+        };
+      })
+    );
+
+    toast({
+      title: "Transaction Initialized",
+      description: `Transaction #${txnId} has been initialized`,
+    });
+  };
+
+  // Authorize transaction (subsequent approvals)
+  const handleAuthorize = (txnId: number) => {
+    if (!account) {
+      toast({
+        title: "Wallet Required",
+        description: "Please connect your wallet first",
+        variant: "destructive",
+      });
+      connectWallet();
+      return;
+    }
+
+    setTransactions((prev) =>
+      prev.map((txn) => {
+        if (txn.id !== txnId) return txn;
+        if (txn.executed || txn.status === TxnStatus.canceled) {
+          return txn;
+        }
+        // Check if already approved by this account
+        if (txn.approvers?.includes(account)) {
+          return txn;
+        }
+
+        const newApprovals = txn.approvals + 1;
+        const newApprovers = [...(txn.approvers || []), account];
+        let newStatus = newApprovals >= MOCK_THRESHOLD ? TxnStatus.successful : TxnStatus.approved;
+        let newExecuted = txn.executed;
+        let newExecutedTime = txn.executedTime;
+
+        // Auto-execute if threshold reached
+        if (newApprovals >= MOCK_THRESHOLD) {
+          newExecuted = true;
+          newExecutedTime = Math.floor(Date.now() / 1000);
+        }
+
+        return {
+          ...txn,
+          approvals: newApprovals,
+          approvers: newApprovers,
+          status: newStatus,
+          executed: newExecuted,
+          executedTime: newExecutedTime,
+        };
+      })
+    );
+
+    toast({
+      title: "Transaction Authorized",
+      description: `Transaction #${txnId} has been authorized`,
+    });
+  };
+
+  // Cancel transaction (only by initiator)
+  const handleCancel = (txnId: number) => {
+    if (!account) {
+      toast({
+        title: "Wallet Required",
+        description: "Please connect your wallet first",
+        variant: "destructive",
+      });
+      connectWallet();
+      return;
+    }
+
+    setTransactions((prev) =>
+      prev.map((txn) => {
+        if (txn.id !== txnId) return txn;
+        if (txn.executed || txn.status === TxnStatus.canceled || txn.status === TxnStatus.successful) {
+          return txn;
+        }
+        // Only initiator can cancel
+        if (txn.txnInitiator.toLowerCase() !== account.toLowerCase()) {
+          return txn;
+        }
+
+        return {
+          ...txn,
+          status: TxnStatus.canceled,
+          executed: true,
+          executedTime: Math.floor(Date.now() / 1000),
+        };
+      })
+    );
+
+    toast({
+      title: "Transaction Canceled",
+      description: `Transaction #${txnId} has been canceled`,
+    });
+  };
+
   const perPage = 10;
   const statusFilter = FILTER_MAP[filter];
-  const filtered = statusFilter === null
-    ? transactions
-    : transactions.filter((t) => t.status === statusFilter);
+  
+  // Separate transactions by execution readiness
+  const readyForExecution = transactions.filter(
+    (t) => t.status === TxnStatus.approved && t.approvals >= MOCK_THRESHOLD
+  );
+  const pendingNotReady = transactions.filter(
+    (t) => t.status === TxnStatus.pending && t.approvals < MOCK_THRESHOLD
+  );
+  
+  // Apply filter
+  let filtered = transactions;
+  if (statusFilter === null) {
+    filtered = transactions;
+  } else if (typeof statusFilter === 'function') {
+    filtered = transactions.filter((t) => statusFilter(t, account));
+  } else {
+    filtered = transactions.filter((t) => t.status === statusFilter);
+  }
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
   const paginated = filtered.slice((page - 1) * perPage, page * perPage);
@@ -100,7 +262,7 @@ export default function Dashboard() {
 
   const pendingCount = transactions.filter((t) => t.status === TxnStatus.pending).length;
   const needsAction = transactions.filter(
-    (t) => t.status === TxnStatus.pending && t.initiatorApproved && t.approvals < MOCK_THRESHOLD
+    (t) => t.status === TxnStatus.pending && t.initiatorApproved && t.approvals < MOCK_THRESHOLD && !t.approvers?.includes(account || "")
   ).length;
 
   return (
@@ -113,7 +275,7 @@ export default function Dashboard() {
           <div>
             <h2 className="text-lg font-medium tracking-display">Operations</h2>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {pendingCount} pending · {needsAction} awaiting signature
+              {pendingNotReady.length} pending · {needsAction} awaiting signature · {readyForExecution.length} ready for execution
             </p>
           </div>
           <Button variant="action" onClick={() => setCreateOpen(true)} className="h-10">
@@ -140,6 +302,26 @@ export default function Dashboard() {
         <div className="flex-1 px-8 pb-8 flex gap-6">
           {/* Transaction list */}
           <div className="flex-1 min-w-0 space-y-4">
+            {/* Ready for Execution Section */}
+            {readyForExecution.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-success glow-dot" />
+                  <h3 className="text-sm font-medium text-success">Ready for Execution</h3>
+                  <span className="text-xs text-muted-foreground">({readyForExecution.length} transactions)</span>
+                </div>
+                {readyForExecution.map((txn) => (
+                  <TransactionCard
+                    key={txn.id}
+                    txn={txn}
+                    signerAddresses={txn.approvers || []}
+                    onSelect={setSelectedTxnId}
+                    selected={selectedTxnId === txn.id}
+                  />
+                ))}
+              </div>
+            )}
+
             {/* Filters */}
             <div className="flex items-center gap-2">
               <Filter className="h-3.5 w-3.5 text-muted-foreground" />
@@ -198,7 +380,14 @@ export default function Dashboard() {
           {/* Detail panel */}
           {selectedTxn && (
             <div className="w-[380px] shrink-0">
-              <TxnDetailPanel txn={selectedTxn} onClose={() => setSelectedTxnId(null)} />
+              <TxnDetailPanel
+                txn={selectedTxn}
+                onClose={() => setSelectedTxnId(null)}
+                onInitialize={() => handleInitialize(selectedTxnId!)}
+                onAuthorize={() => handleAuthorize(selectedTxnId!)}
+                onCancel={() => handleCancel(selectedTxnId!)}
+                connectedAccount={account}
+              />
             </div>
           )}
         </div>

@@ -1,7 +1,8 @@
 export enum TxnStatus {
   pending = 0,
-  successful = 1,
-  canceled = 2,
+  approved = 1,
+  successful = 2,
+  canceled = 3,
 }
 
 export interface Transaction {
@@ -14,6 +15,7 @@ export interface Transaction {
   status: TxnStatus;
   txnInitiator: string;
   executedTime: number;
+  approvers?: string[]; // Track which addresses have approved
 }
 
 export interface Signer {
@@ -24,12 +26,14 @@ export interface Signer {
 
 export const STATUS_LABELS: Record<TxnStatus, string> = {
   [TxnStatus.pending]: "Pending",
+  [TxnStatus.approved]: "Approved",
   [TxnStatus.successful]: "Executed",
   [TxnStatus.canceled]: "Canceled",
 };
 
 export const STATUS_CLASSES: Record<TxnStatus, string> = {
   [TxnStatus.pending]: "status-pending",
+  [TxnStatus.approved]: "status-approved",
   [TxnStatus.successful]: "status-successful",
   [TxnStatus.canceled]: "status-canceled",
 };

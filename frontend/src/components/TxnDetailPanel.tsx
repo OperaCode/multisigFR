@@ -1,92 +1,26 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Transaction, TxnStatus, truncateAddress, formatAmount, STATUS_LABELS, STATUS_CLASSES } from "@/lib/multisig-types";
-import { MOCK_THRESHOLD, MOCK_TOKEN_SYMBOL, MOCK_TXN_SIGNERS, MOCK_TRANSACTIONS } from "@/lib/mock-data";
+import { MOCK_THRESHOLD, MOCK_TOKEN_SYMBOL, MOCK_TXN_SIGNERS } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { ThresholdTracker } from "./ThresholdTracker";
-import { X } from "lucide-react";
+import { X, CheckCircle2 } from "lucide-react";
 
 interface TxnDetailPanelProps {
   txn: Transaction | null;
   onClose: () => void;
+  onInitialize?: () => void;
+  onAuthorize?: () => void;
+  onCancel?: () => void;
+  connectedAccount?: string | null;
 }
 
-export function TxnDetailPanel({ txn, onClose }: TxnDetailPanelProps) {
+export function TxnDetailPanel({ txn, onClose, onInitialize, onAuthorize, onCancel, connectedAccount }: TxnDetailPanelProps) {
   if (!txn) return null;
 
   const signers = MOCK_TXN_SIGNERS.filter((s) => s.txnId === txn.id);
-
-  const handleInitialize = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-
-    console.log("Initialize");
-
-    // let oldTxn = MOCK_TRANSACTIONS.find((t) => t.id === txn.id);
-    // if (oldTxn) {
-    //   console.log(oldTxn, txn);
-    // }
-
-    if (txn.executed || txn.initiatorApproved || txn.status === TxnStatus.canceled || txn.status === TxnStatus.successful || txn.approvals >= MOCK_THRESHOLD) {
-      throw new Error("Transaction cannot be initialized")
-    }
-
-    txn.initiatorApproved = true;
-    txn.approvals += 1;
-
-    if (txn.approvals === MOCK_THRESHOLD) {
-      txn.status = TxnStatus.successful;
-      txn.executed = true;
-      txn.executedTime = Date.now();
-
-      console.log("Initiated and Executed");
-    }
-
-    console.log("Initiated");
-
-    return;
-  };
-
-  const handleAuthorize = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    console.log("Authorize");
-
-    if (txn.executed || txn.approvals >= MOCK_THRESHOLD || txn.status === TxnStatus.canceled) {
-      throw new Error("Transaction cannot be authorized")
-    }
-
-    txn.approvals += 1;
-
-    if (txn.approvals === MOCK_THRESHOLD) {
-      txn.status = TxnStatus.successful;
-      txn.executed = true;
-      txn.executedTime = Date.now();
-
-      console.log("Authorised and Executed");
-      
-      return;
-    }
-
-    console.log("Authorised");
-    
-    return;
-
-  };
-
-  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    console.log("Cancel");
-
-    if (txn.executed || txn.status === TxnStatus.canceled || txn.status === TxnStatus.successful || txn.approvals >= MOCK_THRESHOLD) {
-      throw new Error("Transaction cannot be canceled")
-    }
-
-    txn.status = TxnStatus.canceled;
-    txn.executed = true;
-    txn.executedTime = Date.now();
-
-    console.log("Canceled");
-    
-
-  };
+  const approvers = txn.approvers || [];
+  const hasApproved = connectedAccount ? approvers.includes(connectedAccount) : false;
+  const isInitiator = connectedAccount ? txn.txnInitiator.toLowerCase() === connectedAccount.toLowerCase() : false;
 
   return (
     <AnimatePresence>
@@ -142,22 +76,25 @@ export function TxnDetailPanel({ txn, onClose }: TxnDetailPanelProps) {
             <span className="font-mono text-xs text-muted-foreground mt-1 block">
               {txn.approvals} of {MOCK_THRESHOLD} required
             </span>
+            {txn.status === TxnStatus.pending && txn.approvals >= MOCK_THRESHOLD && (
+              <span className="text-xs text-success mt-1 block flex items-center gap-1">
+                <CheckCircle2 className="h-3 w-3" />
+                Ready for execution
+              </span>
+            )}
           </div>
 
-          {signers.length > 0 && (
+          {approvers.length > 0 && (
             <div>
-              <span className="btn-label text-muted-foreground block mb-2">Signers</span>
+              <span className="btn-label text-muted-foreground block mb-2">Approvers</span>
               <div className="space-y-2">
-                {signers.map((s, i) => (
+                {approvers.map((addr, i) => (
                   <div
                     key={i}
                     className="flex items-center gap-2 px-2 py-1.5 bg-muted/50 rounded-md border border-border"
                   >
                     <div className="w-2 h-2 rounded-full bg-primary glow-dot" />
-                    <span className="font-mono text-xs text-foreground/70">{truncateAddress(s.signerAddress)}</span>
-                    <span className="ml-auto text-[10px] text-muted-foreground">
-                      {new Date(s.timeSigned * 1000).toLocaleDateString()}
-                    </span>
+                    <span className="font-mono text-xs text-foreground/70">{truncateAddress(addr)}</span>
                   </div>
                 ))}
               </div>
@@ -175,15 +112,28 @@ export function TxnDetailPanel({ txn, onClose }: TxnDetailPanelProps) {
         </div>
 
         {/* Contextual actions */}
-        {txn.status === TxnStatus.pending && (
+        {(txn.status === TxnStatus.pending || txn.status === TxnStatus.approved) && (
           <div className="flex gap-3 pt-4 border-t border-border">
-            {!txn.initiatorApproved && (
-              <Button variant="action" onClick={handleInitialize} className="flex-1">Initialize</Button>
+            {!txn.initiatorApproved && isInitiator && (
+              <Button variant="action" onClick={onInitialize} className="flex-1">
+                Initialize
+              </Button>
             )}
-            {txn.initiatorApproved && txn.approvals < MOCK_THRESHOLD && (
-              <Button variant="authorize" onClick={handleAuthorize} className="flex-1">Authorize</Button>
+            {txn.initiatorApproved && txn.approvals < MOCK_THRESHOLD && !hasApproved && (
+              <Button variant="authorize" onClick={onAuthorize} className="flex-1">
+                Authorize
+              </Button>
             )}
-            <Button variant="surface" onClick={handleCancel} className="flex-1">Cancel</Button>
+            {txn.initiatorApproved && txn.approvals < MOCK_THRESHOLD && hasApproved && (
+              <Button variant="outline" disabled className="flex-1">
+                Already Approved
+              </Button>
+            )}
+            {isInitiator && !txn.executed && (txn.status === TxnStatus.pending || txn.status === TxnStatus.approved) && (
+              <Button variant="surface" onClick={onCancel} className="flex-1">
+                Cancel
+              </Button>
+            )}
           </div>
         )}
       </motion.div>
