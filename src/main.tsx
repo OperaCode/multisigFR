@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import FacultyPortal from './pages/falcutyportal.tsx';
+import ClaimPortal from './pages/claimportal.tsx';  
 
 
 
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
     element: <App />,
   },
   { path: '/faculty', element: <FacultyPortal /> },
+  { path: '/claims', element: <ClaimPortal /> },
 ])
 
 
