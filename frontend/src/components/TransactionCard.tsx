@@ -43,6 +43,11 @@ export function TransactionCard({ txn, signerAddresses = [], onSelect, selected 
           <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${STATUS_CLASSES[txn.status]}`}>
             {STATUS_LABELS[txn.status]}
           </span>
+          {txn.status === TxnStatus.pending && txn.approvals >= MOCK_THRESHOLD && (
+            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full border bg-success/10 border-success/30 text-success">
+              Ready
+            </span>
+          )}
         </div>
 
         {/* Col 2: Recipient + Amount */}

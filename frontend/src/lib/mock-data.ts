@@ -25,6 +25,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
     status: TxnStatus.successful,
     txnInitiator: MOCK_SIGNERS[0],
     executedTime: Date.now() / 1000 - 86400 * 3,
+    approvers: [MOCK_SIGNERS[0], MOCK_SIGNERS[1], MOCK_SIGNERS[2]],
   },
   {
     id: 2,
@@ -33,9 +34,10 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
     approvals: 2,
     initiatorApproved: true,
     executed: false,
-    status: TxnStatus.pending,
+    status: TxnStatus.approved,
     txnInitiator: MOCK_SIGNERS[1],
     executedTime: 0,
+    approvers: [MOCK_SIGNERS[1], MOCK_SIGNERS[3]],
   },
   {
     id: 3,
@@ -47,6 +49,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
     status: TxnStatus.pending,
     txnInitiator: MOCK_SIGNERS[0],
     executedTime: 0,
+    approvers: [],
   },
   {
     id: 4,
@@ -58,6 +61,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
     status: TxnStatus.successful,
     txnInitiator: MOCK_SIGNERS[2],
     executedTime: Date.now() / 1000 - 86400 * 7,
+    approvers: [MOCK_SIGNERS[2], MOCK_SIGNERS[0], MOCK_SIGNERS[4]],
   },
   {
     id: 5,
@@ -69,6 +73,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
     status: TxnStatus.canceled,
     txnInitiator: MOCK_SIGNERS[3],
     executedTime: 0,
+    approvers: [MOCK_SIGNERS[3]],
   },
   {
     id: 6,
@@ -77,9 +82,10 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
     approvals: 1,
     initiatorApproved: true,
     executed: false,
-    status: TxnStatus.pending,
+    status: TxnStatus.approved,
     txnInitiator: MOCK_SIGNERS[0],
     executedTime: 0,
+    approvers: [MOCK_SIGNERS[0]],
   },
 ];
 
